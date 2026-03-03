@@ -1,0 +1,83 @@
+name: tests
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: ${{ "{{" }} github.workflow {{ "}}" }}-${{ "{{" }} github.event.pull_request.number || github.ref {{ "}}" }}
+  cancel-in-progress: true
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@eac588ad8def6316056a12d4907a9d4d84ff7a3b # v7.3.0
+      - run: uv run ruff format --check .
+      - run: uv run ruff check .
+      - run: uv run ty check .
+{% if cookiecutter.crds_observatory != '' %}
+  latest_crds_context:
+    uses: spacetelescope/crds/.github/workflows/contexts.yml
+    with:
+      observatory: {{ cookiecutter.crds_observatory }}
+{% endif %}
+  test:
+{% if cookiecutter.crds_observatory != '' %}
+    needs:
+      - latest_crds_context
+{% endif %}
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.13", "3.14"]
+        runs-on: ["ubuntu-latest"]
+        coverage: [false]
+        include:
+          - runs-on: "ubuntu-latest"
+            python-version: 3.14
+            coverage: true
+          - runs-on: "macos-latest"
+            python-version: "3.14"
+    name: run tests (Python ${{ "{{" }} matrix.python-version {{ "}}" }})
+    runs-on: ${{ "{{" }} matrix.runs-on {{ "}}" }}
+{% if cookiecutter.crds_observatory != '' %}
+    env:
+      CRDS_PATH: /tmp/data/crds_cache
+      CRDS_SERVER_URL: https://{{ cookiecutter.crds_observatory }}-crds.stsci.edu
+      CRDS_CONTEXT: ${{ "{{" }} needs.latest_crds_context.outputs.{{ cookiecutter.crds_observatory }} {{ "}}" }}
+      CRDS_CLIENT_RETRY_COUNT: 3
+      CRDS_CLIENT_RETRY_DELAY_SECONDS: 20
+{% endif %}
+    steps:
+{% if cookiecutter.crds_observatory != '' %}
+      - name: cache CRDS reference files retrieved during testing
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
+        with:
+          path: ${{ "{{" }} env.CRDS_PATH {{ "}}" }}
+          key: ${{ "{{" }} env.CRDS_CONTEXT {{ "}}" }}
+{% endif %}
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@eac588ad8def6316056a12d4907a9d4d84ff7a3b # v7.3.0
+      - run: uv run --python=${{ "{{" }} matrix.python-version {{ "}}" }} --group test ${{ "{{" }} matrix.coverage && 'coverage run -m' || '' {{ "}}" }} pytest
+      - if: matrix.coverage
+        name: report coverage to summary
+        run: |
+          uv run coverage combine 
+          echo '## Coverage Report' >> $GITHUB_STEP_SUMMARY
+          uv run coverage report -i -m --format=markdown | tee -a $GITHUB_STEP_SUMMARY
