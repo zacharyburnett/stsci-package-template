@@ -1,6 +1,6 @@
 import re
 
-MODULE_REGEX = r"^[_a-zA-Z][_a-zA-Z0-9]+$"
+MODULE_REGEX = r"^([_a-zA-Z]+[_a-zA-Z\d]+)$"
 
 PACKAGE_NAME = "{{ cookiecutter.package_name }}"
 

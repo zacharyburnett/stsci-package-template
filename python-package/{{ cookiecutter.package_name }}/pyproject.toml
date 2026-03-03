@@ -1,0 +1,83 @@
+{%- if cookiecutter.python_build_backend == "hatchling" %}
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.version.raw-options]
+version_scheme = "release-branch-semver"
+{% elif cookiecutter.python_build_backend == "setuptools" -%}
+[build-system]
+requires = ["setuptools>=61.2", "setuptools_scm[toml]"]
+build-backend = "setuptools.build"
+
+[tool.setuptools_scm]
+{%- endif %}
+
+[project]
+name = "{{ cookiecutter.package_name }}"
+description = "{{ cookiecutter.project_description }}"
+license-files = ["LICENSE"]
+authors = [
+  { name = "STScI" },
+]
+classifiers = [
+  "Topic :: Scientific/Engineering :: Astronomy",
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+]
+dynamic = ["version"]
+requires-python = "{{ cookiecutter.python_version }}"
+dependencies = []
+
+[dependency-groups]
+test = ["pytest{%- if cookiecutter.python_version.split('=')[1].split('.')[1]|int >= 10 -%}>=9{%- endif -%}"]
+docs = ["numpydoc", "sphinx", "sphinx-automodapi", "sphinx-rtd-theme"]
+
+[project.urls]
+repository = "{{ cookiecutter.repository_url }}"
+
+[tool.cruft]
+skip = ["**/__init__.py", "tests/*"]
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+select = [
+  "E",  # pycodestyle errors
+  "W",  # pycodestyle warnings
+  "F",  # Pyflakes
+  "I",  # isort
+  "B",  # flake8-bugbear
+  "UP", # pyupgrade
+]
+
+[tool.pytest{%- if cookiecutter.python_version.split('=')[1].split('.')[1]|int < 10 -%}.ini_options{%- endif -%}]
+minversion = "9"
+
+[tool.coverage.run]
+branch = true
+parallel = true
+source = ["src/", "tests/"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+fail_under = 50
+exclude_also = [
+  "if TYPE_CHECKING:",
+  "if typing.TYPE_CHECKING:",
+  "@overload",
+  "@typing.overload",
+  "class .*\\bProtocol\\):",
+  "@(abc\\.)?abstractmethod",
+  "raise NotImplementedError",
+  "\\.\\.\\.",
+]
+
+[tool.uv]
+default-groups = ["check", "test", "docs"]

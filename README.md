@@ -27,6 +27,10 @@ for more information on installing and using `cruft`.
 - `.gitignore` that covers editor files and Python objects
 - scheduled GitHub Actions workflow that checks for changes to the upstream template (this repository) and makes a pull request to apply updates
 
+### Optional Features
+
+- option to set up a Python package
+
 ## Acknowledgements
 
 Adapted from [Cookiecutter PyPackage](https://github.com/audreyfeldroy/cookiecutter-pypackage)
