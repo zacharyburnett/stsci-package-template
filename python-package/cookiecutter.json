@@ -8,6 +8,7 @@
   "python_version": ">=3.12",
   "python_c_extensions": false,
   "python_build_backend": ["hatchling", "setuptools"],
+  "crds_observatory": ["none", "roman", "jwst", "hst"],
   "__prompts__": {
     "project_name": "name of project",
     "package_name": "importable package name (without spaces or hyphens)",
