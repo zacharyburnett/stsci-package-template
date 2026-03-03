@@ -1,0 +1,18 @@
+version: 2
+
+updates:
+  - package-ecosystem: "pip"
+    directory: "/"
+{%- if cookiecutter.manage_changelog_with_towncrier -%}
+    labels:
+      - no-changelog-entry-needed
+{%- endif -%}
+    target-branch: "main"
+    schedule:
+      interval: "monthly"
+    cooldown:
+      default-days: 7
+    groups:
+      actions:
+        patterns:
+          - "*"
