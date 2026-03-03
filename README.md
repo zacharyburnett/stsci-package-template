@@ -34,6 +34,7 @@ for more information on installing and using `cruft`.
 - option to set up a Python package
 - option to manage changelog with [`towncrier`](https://github.com/twisted/towncrier)
 - option to publish documentation to ReadTheDocs
+- option to use a task runner (`just`, `nox`, or `tox`)
 
 ## Acknowledgements
 

@@ -5,6 +5,7 @@
   "project_description": null,
   "manage_changelog_with_towncrier": false,
   "publish_docs_to": ["none", "readthedocs.io", "github.io"],
+  "task_runner": ["none", "nox", "tox"],
   "python_version": ">=3.12",
   "python_c_extensions": false,
   "python_build_backend": ["hatchling", "setuptools"],
@@ -19,6 +20,12 @@
       "__prompt__": "publish documentation?",
       "none": "no",
       "readthedocs.io": "yes, to ReadTheDocs"
+    },
+    "task_runner": {
+      "__prompt__": "set up a task runner?",
+      "none": "no",
+      "nox": "yes, Nox (Python task runner with Python syntax)",
+      "tox": "yes, Tox (virtualenv-based Python task runner with domain-specific INI syntax)"
     },
     "python_version": "Python version requirements",
     "python_build_backend": {

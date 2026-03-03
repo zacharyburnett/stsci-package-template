@@ -6,6 +6,7 @@ REMOVE_PATHS = [
     "{% if not cookiecutter.manage_changelog_with_towncrier %}.github/workflows/changelog.yml{% endif %}",
     "{% if not cookiecutter.manage_changelog_with_towncrier %}towncrier.toml{% endif %}",
     '{% if cookiecutter.publish_docs_to != "readthedocs.io" %}.readthedocs.yaml{% endif %}',
+    '{% if cookiecutter.task_runner != "nox" %}noxfile.py{% endif %}',
     "{% if not cookiecutter.python_c_extensions %}setup.py{% endif %}",
 ]
  
