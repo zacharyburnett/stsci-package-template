@@ -3,10 +3,12 @@
   "package_name": "{{ cookiecutter.project_name.lower().replace(' ', '_').replace('-', '_').replace(\"'\", '') }}",
   "repository_url": "https://github.com/spacetelescope/{{ cookiecutter.package_name }}",
   "project_description": null,
+  "manage_changelog_with_towncrier": false,
   "__prompts__": {
     "project_name": "name of project",
     "package_name": "importable package name (without spaces or hyphens)",
     "repository_url": "URL of repository",
     "project_description": "short description of project",
+    "manage_changelog_with_towncrier": "use towncrier to manage changelog entries?"
   }
 }

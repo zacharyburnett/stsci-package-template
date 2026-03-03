@@ -30,6 +30,7 @@ for more information on installing and using `cruft`.
 ### Optional Features
 
 - option to set up a Python package
+- option to manage changelog with [`towncrier`](https://github.com/twisted/towncrier)
 
 ## Acknowledgements
 

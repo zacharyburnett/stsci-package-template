@@ -5,7 +5,6 @@ REMOVE_PATHS = [
     "{% if not cookiecutter.manage_changelog_with_towncrier %}changes/{% endif %}",
     "{% if not cookiecutter.manage_changelog_with_towncrier %}.github/workflows/changelog.yml{% endif %}",
     "{% if not cookiecutter.manage_changelog_with_towncrier %}towncrier.toml{% endif %}",
-    "{% if not cookiecutter.python_c_extensions %}setup.py{% endif %}",
 ]
  
 for path in REMOVE_PATHS:
