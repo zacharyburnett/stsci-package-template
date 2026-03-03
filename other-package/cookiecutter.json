@@ -1,0 +1,12 @@
+{
+  "project_name": null,
+  "package_name": "{{ cookiecutter.project_name.lower().replace(' ', '_').replace('-', '_').replace(\"'\", '') }}",
+  "repository_url": "https://github.com/spacetelescope/{{ cookiecutter.package_name }}",
+  "project_description": null,
+  "__prompts__": {
+    "project_name": "name of project",
+    "package_name": "importable package name (without spaces or hyphens)",
+    "repository_url": "URL of repository",
+    "project_description": "short description of project",
+  }
+}

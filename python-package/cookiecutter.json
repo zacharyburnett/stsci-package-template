@@ -1,0 +1,37 @@
+{
+  "project_name": null,
+  "package_name": "{{ cookiecutter.project_name.lower().replace(' ', '_').replace('-', '_').replace(\"'\", '') }}",
+  "repository_url": "https://github.com/spacetelescope/{{ cookiecutter.package_name }}",
+  "project_description": null,
+  "manage_changelog_with_towncrier": false,
+  "publish_docs_to": ["none", "readthedocs.io"],
+  "python_version": ">=3.12",
+  "python_c_extensions": false,
+  "python_build_backend": ["hatchling", "setuptools"],
+  "__prompts__": {
+    "project_name": "name of project",
+    "package_name": "importable package name (without spaces or hyphens)",
+    "repository_url": "URL of repository",
+    "project_description": "short description of project",
+    "manage_changelog_with_towncrier": "use towncrier to manage changelog entries?",
+    "publish_docs_to": {
+      "__prompt__": "publish documentation?",
+      "none": "no",
+      "readthedocs.io": "yes, to ReadTheDocs"
+    },
+    "python_version": "Python version requirements",
+    "python_c_extensions": "build C extensions?",
+    "python_build_backend": {
+      "__prompt__": "backend to build package with",
+      "hatchling": "Hatchling",
+      "setuptools": "setuptools (required to build C extensions)"
+    },
+    "crds_observatory": {
+      "__prompt__": "retrieve reference files from CRDS?",
+      "none": "no",
+      "roman": "yes, from Roman CRDS",
+      "jwst": "yes, from JWST CRDS",
+      "hst": "yes, from HST CRDS"
+    }
+  }
+}
