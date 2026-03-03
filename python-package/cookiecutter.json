@@ -4,7 +4,7 @@
   "repository_url": "https://github.com/spacetelescope/{{ cookiecutter.package_name }}",
   "project_description": null,
   "manage_changelog_with_towncrier": false,
-  "publish_docs_to": ["none", "readthedocs.io"],
+  "publish_docs_to": ["none", "readthedocs.io", "github.io"],
   "python_version": ">=3.12",
   "python_c_extensions": false,
   "python_build_backend": ["hatchling", "setuptools"],

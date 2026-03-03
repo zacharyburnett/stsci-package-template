@@ -71,6 +71,12 @@ docs = ["numpydoc", "sphinx", "sphinx-automodapi", "sphinx-rtd-theme"]
 
 [project.urls]
 repository = "{{ cookiecutter.repository_url }}"
+{%- if cookiecutter.publish_docs_to == 'readthedocs.io' %}
+documentation = "https://{{ cookiecutter.package_name }}.readthedocs.io"
+{%- elif cookiecutter.publish_docs_to == 'github.io' %}
+documentation = "https://spacetelescope.github.io/{{ cookiecutter.package_name }}"
+{%- endif %}
+
 
 [tool.cruft]
 skip = ["**/__init__.py", "tests/*"]
