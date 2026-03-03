@@ -21,12 +21,12 @@
       "readthedocs.io": "yes, to ReadTheDocs"
     },
     "python_version": "Python version requirements",
-    "python_c_extensions": "build C extensions?",
     "python_build_backend": {
       "__prompt__": "backend to build package with",
       "hatchling": "Hatchling",
-      "setuptools": "setuptools (required to build C extensions)"
+      "setuptools": "setuptools"
     },
+    "python_c_extensions": "build C extensions?",
     "crds_observatory": {
       "__prompt__": "retrieve reference files from CRDS?",
       "none": "no",

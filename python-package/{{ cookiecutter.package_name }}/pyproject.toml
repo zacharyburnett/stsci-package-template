@@ -1,6 +1,12 @@
 {%- if cookiecutter.python_build_backend == "hatchling" %}
 [build-system]
-requires = ["hatchling", "hatch-vcs"]
+requires = [
+  "hatchling>=1.20",
+  "hatch-vcs",
+{%- if cookiecutter.python_c_extensions %}
+  "hatch-c>=0.2.2",
+{%- endif %}
+]
 build-backend = "hatchling.build"
 
 [tool.hatch.version]
@@ -8,7 +14,33 @@ source = "vcs"
 
 [tool.hatch.version.raw-options]
 version_scheme = "release-branch-semver"
-{% elif cookiecutter.python_build_backend == "setuptools" -%}
+{%- if cookiecutter.python_c_extensions %}
+[tool.hatch.build]
+artifacts = [
+  "src/**/*.dll",
+  "src/**/*.dylib",
+  "src/**/*.so",
+]
+
+[tool.hatch.build.sources]
+src = "src/"
+
+[tool.hatch.build.targets.sdist]
+packages = ["src/{{ cookiecutter.package_name }}/"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/{{ cookiecutter.package_name }}/"]
+
+[[tool.hatch.build.hooks.hatch-c.extensions]]
+name = "{{ cookiecutter.package_name }}.replace_with_c_module_name"
+sources = ["src/**/*.c"]
+include-dirs = ["src/"]
+extra-compile-args = ["-O2"]
+define-macros = []
+undef-macros = []
+py-limited-api = "cp39"
+{%- endif %}
+{%- elif cookiecutter.python_build_backend == "setuptools" %}
 [build-system]
 requires = ["setuptools>=61.2", "setuptools_scm[toml]"]
 build-backend = "setuptools.build"

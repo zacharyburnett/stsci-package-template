@@ -1,0 +1,75 @@
+name: build
+
+on:
+  pull_request:
+  release:
+    types: [released]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ "{{" }} github.workflow {{ "}}" }}-${{ "{{" }} github.event.pull_request.number || github.ref {{ "}}" }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+{% if not cookiecutter.python_c_extensions %}
+    runs-on: ubuntu-latest
+{% else %}
+    strategy:
+      matrix:
+        target:
+          - cp3*-manylinux_x86_64
+          - cp3*-macosx_x86_64
+          - cp3*-macosx_arm64
+    runs-on: ${{ "{{" }} contains(matrix.target, 'macos') && macos-latest || contains(matrix.target, 'win') && 'windows-latest' || 'ubuntu-latest' {{ "}}" }}
+{% endif %}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-tags: true
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@eac588ad8def6316056a12d4907a9d4d84ff7a3b # v7.3.0
+        with:
+          # Cache disabled to prevent cache-poisoning attacks on release artifacts.
+          enable-cache: false
+{% if cookiecutter.python_c_extensions %}
+      - if: ${{ "{{" }} runner.os == 'Linux' {{ "}}" }}
+        uses: docker/setup-qemu-action@c7c53464625b32c7a7e944ae62b3e17d2b600130 # v3.7.0
+        with:
+          platforms: all
+      - uses: pypa/cibuildwheel@v3.3.1
+        with:
+          package-dir: ./
+          output-dir: dist/
+        env:
+          CIBW_BUILD_FRONTEND: build[uv]
+          CIBW_BUILD: ${{ "{{" }} matrix.target {{ "}}" }}
+          CIBW_ARCHS: ${{ "{{" }} runner.os == 'macOS' && 'arm64 x86_64' || 'auto' {{ "}}" }}
+{% endif %}
+      - run: uv build --sdist {%- if not cookiecutter.python_c_extensions -%} --wheel{%- endif %}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist{%- if not cookiecutter.python_c_extensions -%}-${{ "{{" }} matrix.target {{ "}}" }}{%- endif %}
+          path: ./dist/
+  publish:
+    needs: [build]
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      attestations: write
+    # Requires environment protection rules in GitHub Settings:
+    # Settings > Environments > pypi > Add required reviewers
+    environment:
+      name: pypi
+      url: https://pypi.org/p/{{ cookiecutter.package_name }}
+    steps:
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          pattern: dist*
+          path: dist/
+          merge-multiple: true
+      - uses: actions/attest-build-provenance@96278af6caaf10aea03fd8d33a09a777ca52d62f # v3.2.0
+        with:
+          subject-path: "dist/*"
+      # To upload to PyPI without a token, add this workflow file as a Trusted Publisher in the project settings on the PyPI website
+      - uses: pypa/gh-action-pypi-publish@ed0c53931b1dc9bd32cbe73a98c7f6766f8a527e # v1.13.0
