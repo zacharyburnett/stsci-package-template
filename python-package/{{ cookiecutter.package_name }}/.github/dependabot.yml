@@ -3,10 +3,10 @@ version: 2
 updates:
   - package-ecosystem: "pip"
     directory: "/"
-{%- if cookiecutter.manage_changelog_with_towncrier -%}
+{%- if cookiecutter.manage_changelog_with_towncrier %}
     labels:
       - no-changelog-entry-needed
-{%- endif -%}
+{%- endif %}
     target-branch: "main"
     schedule:
       interval: "monthly"

@@ -28,6 +28,7 @@ for more information on installing and using `cruft`.
 - scheduled GitHub Actions workflow that checks for changes to the upstream template (this repository) and makes a pull request to apply updates
 - GitHub Dependabot config for grouped monthly dependency updates
 - GitHub pull request template
+- GitHub Actions workflow that automatically adds labels to pull requests
 
 ### Optional Features
 
