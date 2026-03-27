@@ -21,7 +21,6 @@ jobs:
           enable-cache: false
       - name: Check for updates to upstream template
         id: upstream-updates
-        id: check
         run: |
           CHANGES=0
           if [ -f .cruft.json ]; then

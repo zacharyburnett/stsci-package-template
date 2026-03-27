@@ -1,12 +1,13 @@
 # Contributing to {{ cookiecutter.project_name }}
 
-{{ cookiecutter.package_name }} is an open source package written in Python.
+`{{ cookiecutter.package_name }}` is an open source package written in Python.
 The source code is available at {{ cookiecutter.repository_url }}.
 New contributions and contributors are very welcome!
-Do not hesitate to reach out to the package maintainers if you are new to open-source development or if you have any questions/concerns.
+Do not hesitate to reach out to the package maintainers if you are new to open-source development or if you have any questions or concerns.
 We only ask that all contributors adhere to the [Space Telescope Code of Conduct](./CODE_OF_CONDUCT.md).
 
 ## Reporting bugs / requesting a new feature
+
 If you have encountered a bug, or wish to request a new feature,
 [open an issue]({{ cookiecutter.repository_url }}/issues).
 
@@ -16,31 +17,34 @@ If you have encountered a bug, or wish to request a new feature,
 > If you are new to GitHub, to `git`, or to version-control systems in general, refer to the [GitHub tutorial](https://docs.github.com/en/get-started/git-basics/set-up-git) and / or to the [`git` reference manual](https://git-scm.com/docs).
 
 To suggest a specific code change, or to contribute new code:
+
 1. [Fork this repository]({{ cookiecutter.repository_url }}/fork).
 2. Clone your fork to your local machine:
-    ```shell
-    git clone https://github.com/YOUR_USERNAME/{{ cookiecutter.package_name }}
-    cd {{ cookiecutter.package_name }}/
-    ```
+
+   ```shell
+   git clone https://github.com/YOUR_USERNAME/{{ cookiecutter.package_name }}
+   cd {{ cookiecutter.package_name }}/
+   ```
 
 3. Add the `upstream` repository, as a remote, to your local clone:
-    ```shell
-    git remote add upstream {{ cookiecutter.repository_url }}
-    ```
+   ```shell
+   git remote add upstream {{ cookiecutter.repository_url }}
+   ```
 
 > [!TIP]
 > When making changes, create a new "branch" for each new feature or bug fix.
 > We recommend naming your new branch something like `feature/cool_new_feature`, `fix/thing_that_was_fixed`, `docs/updated_description_of_feature`, etc:
+>
 > ```shell
 > git fetch upstream --tags
 > git checkout upstream/main -b fix/that_annoying_bug
 > ```
 
 4. Install `pre-commit` to automatically check your changes for formatting issues:
-    ```shell
-    pip install pre-commit
-    pre-commit install
-    ```
+   ```shell
+   pip install pre-commit
+   pre-commit install
+   ```
 
 > [!TIP]
 > To run `pre-commit` checks manually, do `pre-commit run --all`.
@@ -48,12 +52,12 @@ To suggest a specific code change, or to contribute new code:
 5. [Install `{{ cookiecutter.package_name }}` to your development environment.](#creating-a-development-environment)
 6. Make your changes using your editor of choice.
 7. Commit and push your changes to your fork as a new branch:
-    ```shell
-    git add changed_file.py
-    git commit -m "description of changes"
-    git push
-    ```
-    The [`git` reference manual](https://git-scm.com/docs) has details on what these commands do.
+   ```shell
+   git add changed_file.py
+   git commit -m "description of changes"
+   git push
+   ```
+   The [`git` reference manual](https://git-scm.com/docs) has details on what these commands do.
 8. [Open a new Pull Request]({{ cookiecutter.repository_url }}/pulls) requesting that your changes be merged into the `main` branch of this repository.
 9. Ensure that your change passes automated testing.
 10. Complete the items in the **Tasks** checklist (created when you open the pull request) to the best of your ability.
@@ -77,6 +81,7 @@ However, if the changes to `main` touch the same lines as your changes, you will
 ### Incorporate upstream changes manually with `git rebase`
 
 Rebase your current branch onto `upstream/main` to apply any new changes on top of yours:
+
 ```shell
 git fetch --all
 git rebase -i upstream/main
@@ -98,6 +103,7 @@ When developing `{{ cookiecutter.package_name }}` (or any other Python package),
 > Python "environments" are isolated Python installations, confined to a single directory, where you can install packages, dependencies, and tools without cluttering your system Python libraries.
 
 You can create a development environment with `mamba` / `conda`:
+
 ```shell
 mamba create -n {{ cookiecutter.package_name }}_dev_env python=3.13
 mamba activate {{ cookiecutter.package_name }}_dev_env
@@ -106,6 +112,7 @@ hx .
 ```
 
 Breaking down what these lines do:
+
 1. Create a new empty environment called `{{ cookiecutter.package_name }}_dev_env`:
    ```shell
    mamba create -n {{ cookiecutter.package_name }}_dev_env python=3.13
@@ -116,7 +123,7 @@ Breaking down what these lines do:
    ```
 3. Install the local package (`{{ cookiecutter.package_name }}`) to your environment in "editable mode", so that any code changes will be instantly reflected in the installed package (useful for testing):
    ```shell
-   pip install -e . 
+   pip install -e .
    ```
 4. Run your editor of choice (in this example I use Helix `hx`):
    ```shell
@@ -140,16 +147,17 @@ pre-commit run
 ```
 
 You can also install `pre-commit` locally, to run checks before every `git commit` action:
+
 ```shell
 pre-commit install
 ```
 
 The full configuration for `pre-commit` checks can be found in `.pre-commit-config.yaml`.
 
-
 ### PEP8 compliance
 
-Code style generally conforms to [PEP8](https://peps.python.org/pep-0008/), enforced using [`ruff`](https://docs.astral.sh/ruff/).
+Code style generally conforms to [PEP8](https://peps.python.org/pep-0008/),
+enforced using [`ruff`](https://docs.astral.sh/ruff/).
 `ruff` will automatically pick up the appropriate configuration and perform only the checks that are turned on for our repository.
 
 ### Numpy docstring style
@@ -162,7 +170,7 @@ We use [Codespell](https://github.com/codespell-project/codespell) to check for 
 
 ### PEP-compliant type hints
 
-Type hints are *not* required for contributions. If type hints are used, though, their compliance with [PEP-484](https://peps.python.org/pep-0484/) is enforced with [`mypy`](https://mypy.readthedocs.io/en/stable/index.html).
+Type hints are _not_ required for contributions. If type hints are used, though, their compliance with [PEP-484](https://peps.python.org/pep-0484/) is enforced with [`mypy`](https://mypy.readthedocs.io/en/stable/index.html).
 
 ## Writing and maintaining documentation
 

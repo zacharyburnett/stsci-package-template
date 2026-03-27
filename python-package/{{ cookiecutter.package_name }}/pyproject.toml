@@ -1,4 +1,4 @@
-{%- if cookiecutter.python_build_backend == "hatchling" %}
+{%- if cookiecutter.python_build_backend == "hatchling" -%}
 [build-system]
 requires = [
   "hatchling>=1.20",
@@ -43,7 +43,7 @@ py-limited-api = "cp39"
 {%- elif cookiecutter.python_build_backend == "setuptools" %}
 [build-system]
 requires = ["setuptools>=61.2", "setuptools_scm[toml]"]
-build-backend = "setuptools.build"
+build-backend = "setuptools.build_meta"
 
 [tool.setuptools_scm]
 {%- endif %}
@@ -51,6 +51,7 @@ build-backend = "setuptools.build"
 [project]
 name = "{{ cookiecutter.package_name }}"
 description = "{{ cookiecutter.project_description }}"
+readme = "README.md"
 license-files = ["LICENSE"]
 authors = [{ name = "STScI" }]
 classifiers = [
@@ -114,93 +115,3 @@ exclude_also = [
   "raise NotImplementedError",
   "\\.\\.\\.",
 ]
-
-[tool.uv]
-default-groups = ["check", "test", "docs"]
- 
-{% if cookiecutter.task_runner == 'tox' %}
-[tool.tox]
-requires = ["tox>=4.19", "tox-uv"]
-
-[tool.tox.env_run_base]
-factors = [["oldestdeps"], ["cov"], ["xdist"]]
-deps = [
-  "pytest>=9",
-  { replace = "if", condition = "factor.cov", then = [
-    "pytest-cov",
-  ], extend = true },
-  { replace = "if", condition = "factor.xdist", then = [
-    "pytest-xdist",
-  ], extend = true },
-]
-dependency_groups = ["test"]
-uv_resolution = { replace = "if", condition = "factor.oldestdeps", then = "lowest-direct", default = "highest" }
-pass_env = [
-  "TOXENV",
-  "CI",
-  "CODECOV_*",
-  "HOME",
-  "STRICT_VALIDATION",
-  "PASS_INVALID_VALUES",
-  "VALIDATE_ON_ASSIGNMENT",
-  "CRDS_*",
-  "TEST_BIGDATA",
-]
-commands_pre = [["{list_dependencies_command}"]]
-commands = [
-  [
-    "pytest",
-    { replace = "if", condition = "factor.cov", then = [
-      "--cov",
-      "--cov-report",
-      "xml:{toxinidir}/coverage.xml",
-      "--cov-report",
-      "term-missing",
-    ], extend = true },
-    { replace = "if", condition = "factor.xdist", then = [
-      "--num-processes",
-      "auto",
-    ], extend = true },
-    "{posargs}",
-  ],
-]
-
-[tool.tox.env.format]
-deps = ["ruff", "ty"]
-commands = [
-  [
-    "ruff",
-    "format",
-    ".",
-  ],
-  [
-    "ruff",
-    "check",
-    ".",
-    "--fix",
-  ],
-  [
-    "ruff",
-    "check",
-    ".",
-    "--fix",
-    "--select",
-    "I",
-  ],
-  [
-    "ty",
-    "check",
-    ".",
-    "--output-format=concise",
-  ],
-]
-
-[tool.tox.env.build]
-deps = ["build"]
-commands = [["python", "-m", "build"]]
-
-[tool.tox.env.build-docs]
-deps = ["sphinx"]
-dependency_groups = ["docs"]
-commands = [["sphinx-build", "-W", "docs", "docs/_build/html/", "{posargs}"]]
-{% endif %}

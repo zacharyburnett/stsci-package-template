@@ -1,6 +1,7 @@
+from pathlib import Path
+
 import numpy as np
 from setuptools import Extension, setup
-from pathlib import Path
 
 # Setup C module include directories
 include_dirs = [np.get_include()]
@@ -12,10 +13,9 @@ setup(
     ext_modules=[
         Extension(
             "{{ cookiecutter.package_name }}.replace_with_c_module_name",
-            Path.glob("src/**/*.c"),
+            Path(__file__).parent.glob("src/**/*.c"),
             include_dirs=include_dirs,
             define_macros=define_macros,
         ),
     ],
 )
-

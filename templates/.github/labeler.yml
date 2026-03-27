@@ -1,4 +1,4 @@
-{%- if cookiecutter.manage_changelog_with_towncrier %}
+{%- if cookiecutter.manage_changelog_with_towncrier -%}
 breaking-change:
   - changed-files:
     - any-glob-to-any-file:
@@ -16,7 +16,7 @@ fix:
 {% endif %}
 documentation:
   - changed-files:
-    - all-globs-to-any-file: ['*.rst', '!CHANGES.rst']
+    - all-globs-to-any-file: ['*.rst', '!CHANGES.rst'{%- if cookiecutter.manage_changelog_with_towncrier -%}, '!changes/*'{%- endif -%}]
     - any-glob-to-any-file:
       - 'docs/**/*'
       - '*.md'
@@ -24,7 +24,7 @@ documentation:
       - 'LICENSE'
 {%- if cookiecutter.manage_changelog_with_towncrier %}
       - 'changes/*.docs.rst'
-{% endif %}
+{%- endif %}
 
 packaging:
   - changed-files:

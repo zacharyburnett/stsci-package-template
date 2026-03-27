@@ -1,0 +1,44 @@
+[tox]
+requires = ["tox>=4.19"]
+
+[tox.env_run_base]
+factors = [["cov"], ["xdist"]]
+deps = [
+  "pytest>=9",
+  { replace = "if", condition = "factor.cov", then = [
+    "pytest-cov",
+  ], extend = true },
+  { replace = "if", condition = "factor.xdist", then = [
+    "pytest-xdist",
+  ], extend = true },
+]
+dependency_groups = ["test"]
+pass_env = [
+  "TOXENV",
+  "CI",
+  "CODECOV_*",
+  "HOME",
+  "STRICT_VALIDATION",
+  "PASS_INVALID_VALUES",
+  "VALIDATE_ON_ASSIGNMENT",
+  "CRDS_*",
+  "TEST_BIGDATA",
+]
+commands_pre = [["{list_dependencies_command}"]]
+commands = [
+  [
+    "pytest",
+    { replace = "if", condition = "factor.cov", then = [
+      "--cov",
+      "--cov-report",
+      "xml:{toxinidir}/coverage.xml",
+      "--cov-report",
+      "term-missing",
+    ], extend = true },
+    { replace = "if", condition = "factor.xdist", then = [
+      "--num-processes",
+      "auto",
+    ], extend = true },
+    "{posargs}",
+  ],
+]

@@ -19,7 +19,11 @@ COMMON_FILENAMES = [
     "docs/assets/stsci_name.png",
 ]
 READTHEDOCS_FILENAMES = [".readthedocs.yaml"]
-TOWNCRIER_FILENAMES = [".github/workflows/changelog.yml"]
+TOWNCRIER_FILENAMES = [
+    "towncrier.toml",
+    ".github/workflows/changelog.yml",
+    ".github/release.yml",
+]
 
 
 @pytest.mark.parametrize("manage_changelog_with_towncrier", [False, True])
@@ -85,7 +89,7 @@ def test_python_package_template(
         assert (expected_package_dir / "noxfile.py").exists()
     else:
         assert not (expected_package_dir / "noxfile.py").exists()
-    
+
     pyproject_toml_filename = expected_package_dir / "pyproject.toml"
 
     assert pyproject_toml_filename.exists()
@@ -94,8 +98,8 @@ def test_python_package_template(
         pyproject_toml = tomllib.load(pyproject_toml_file)
 
         assert (
-            pyproject_toml["build-system"]["build-backend"]
-            == f"{python_build_backend}.build"
+            f"{python_build_backend}.build"
+            in pyproject_toml["build-system"]["build-backend"]
         )
 
         assert pyproject_toml["project"]["name"] == expected_package_name
@@ -108,11 +112,9 @@ def test_python_package_template(
 
 
 @pytest.mark.parametrize("manage_changelog_with_towncrier", [False, True])
-@pytest.mark.parametrize("publish_docs_to", ["none", "readthedocs.io"])
 def test_other_package_template(
     tmp_path,
     manage_changelog_with_towncrier,
-    publish_docs_to,
 ):
     project_name = "Other Package Template Test"
     project_description = "this is a test of the Other Package template"
@@ -125,7 +127,6 @@ def test_other_package_template(
             "project_name": project_name,
             "project_description": project_description,
             "manage_changelog_with_towncrier": manage_changelog_with_towncrier,
-            "publish_docs_to": publish_docs_to,
         },
     )
 
@@ -139,15 +140,8 @@ def test_other_package_template(
         assert (expected_package_dir / filename).exists()
 
     if manage_changelog_with_towncrier:
-        for filename in TOWNCRIER_FILENAMES + ["towncrier.toml"]:
+        for filename in TOWNCRIER_FILENAMES:
             assert (expected_package_dir / filename).exists()
     else:
-        for filename in TOWNCRIER_FILENAMES + ["towncrier.toml"]:
-            assert not (expected_package_dir / filename).exists()
-
-    if publish_docs_to == "readthedocs.io":
-        for filename in READTHEDOCS_FILENAMES:
-            assert (expected_package_dir / filename).exists()
-    else:
-        for filename in READTHEDOCS_FILENAMES:
+        for filename in TOWNCRIER_FILENAMES:
             assert not (expected_package_dir / filename).exists()

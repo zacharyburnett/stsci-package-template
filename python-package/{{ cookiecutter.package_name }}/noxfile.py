@@ -2,6 +2,7 @@ import nox
 
 nox.options.sessions = ["format", "test"]
 
+
 @nox.session(python="3")
 def format(session):
     session.install("ruff")

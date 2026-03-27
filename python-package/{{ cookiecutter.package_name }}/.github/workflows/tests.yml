@@ -22,125 +22,117 @@ jobs:
   format:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@v6
         with:
           persist-credentials: false
-      - uses: astral-sh/setup-uv@eac588ad8def6316056a12d4907a9d4d84ff7a3b # v7.3.0
-{% if cookiecutter.task_runner == 'none' %}
-      - run: uv run ruff format --check .
-      - run: uv run ruff check .
-      - run: uv run ty check .
-{% elif cookiecutter.task_runner == 'nox' %}
-      - run: uv run nox -s format
-{% elif cookiecutter.task_runner == 'tox' %}
-      - run: uv run tox -e format
-{% endif %}
-{% if cookiecutter.task_runner != 'tox' %}
+      - uses: astral-sh/setup-uv@v7
+      - run: uvx prek -a
+{%- if cookiecutter.task_runner != 'tox' %}
   versions:
     runs-on: ubuntu-latest
     steps:
       - name: retrieve source code
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@v6
         with:
           persist-credentials: false
           path: ./{{ cookiecutter.package_name }}/
       - name: retrieve tool script
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@v6
         with:
           repository: spacetelescope/stsci-package-template
           persist-credentials: false
           path: ./stsci_package_template/
-      - uses: astral-sh/setup-uv@eac588ad8def6316056a12d4907a9d4d84ff7a3b # v7.3.0
+      - uses: astral-sh/setup-uv@v7
       - name: derive supported versions of Python from source code
         id: supported_pythons
         run: echo versions=$(uv run ./stsci_package_template/tools/supported_pythons.py  --package-source=./{{ cookiecutter.package_name }}/) > $GITHUB_OUTPUT
     outputs:
       supported_pythons: ${{ "{{" }} steps.supported_pythons.outputs.versions {{ "}}" }}
-{% endif %}
-{% if cookiecutter.crds_observatory != '' %}
+{%- endif %}
+{%- if cookiecutter.crds_observatory != 'none' %}
   latest_crds_context:
-    uses: spacetelescope/crds/.github/workflows/contexts.yml
+    uses: spacetelescope/crds/.github/workflows/contexts.yml@main
     with:
       observatory: {{ cookiecutter.crds_observatory }}
-{% endif %}
+{%- endif %}
   test:
-{% if cookiecutter.task_runner != 'tox' or cookiecutter.crds_observatory != '' %}
+{%- if cookiecutter.task_runner != 'tox' or cookiecutter.crds_observatory != 'none' %}
     needs:
-{% if cookiecutter.task_runner != 'tox' %}
+{%- if cookiecutter.task_runner != 'tox' %}
       - versions
-{% endif %}
-{% if cookiecutter.crds_observatory != '' %}
+{%- endif %}
+{%- if cookiecutter.crds_observatory != 'none' %}
       - latest_crds_context
-{% endif %}
-{% endif %}
-{% if cookiecutter.task_runner != 'tox' %}
+{%- endif %}
+{%- endif %}
+{%- if cookiecutter.task_runner != 'tox' %}
     strategy:
       fail-fast: false
       matrix:
         runs-on: ["ubuntu-latest"]
-{% if cookiecutter.task_runner == 'none' %}
+{%- if cookiecutter.task_runner == 'none' %}
         python-version: ${{ "{{" }} fromJSON(needs.versions.outputs.supported_pythons) {{ "}}" }}
-{% endif %}
+{%- endif %}
         coverage: [false]
         include:
           - runs-on: "ubuntu-latest"
-{% if cookiecutter.task_runner == 'none' %}
+{%- if cookiecutter.task_runner == 'none' %}
             python-version: "3"
-{% endif %}
+{%- endif %}
             coverage: true
           - runs-on: "macos-latest"
-{% if cookiecutter.task_runner == 'none' %}
+{%- if cookiecutter.task_runner == 'none' %}
             python-version: "3"
-{% endif %}
-    name: run tests (Python ${{ "{{" }} matrix.python-version {{ "}}" }})
+{%- endif %}
+    name: run tests (Python ${{ "{{" }} {%- if cookiecutter.task_runner == 'nox' -%}needs.versions.outputs.supported_pythons{%- else -%}matrix.python-version{%- endif -%} {{ "}}" }})
     runs-on: ${{ "{{" }} matrix.runs-on {{ "}}" }}
-{% if cookiecutter.crds_observatory != '' %}
+{%- if cookiecutter.crds_observatory != 'none' %}
     env:
       CRDS_PATH: /tmp/data/crds_cache
       CRDS_SERVER_URL: https://{{ cookiecutter.crds_observatory }}-crds.stsci.edu
       CRDS_CONTEXT: ${{ "{{" }} needs.latest_crds_context.outputs.{{ cookiecutter.crds_observatory }} {{ "}}" }}
       CRDS_CLIENT_RETRY_COUNT: 3
       CRDS_CLIENT_RETRY_DELAY_SECONDS: 20
-{% endif %}
+{%- endif %}
     steps:
-{% if cookiecutter.crds_observatory != '' %}
+{%- if cookiecutter.crds_observatory != 'none' %}
       - name: cache CRDS reference files retrieved during testing
         uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         with:
           path: ${{ "{{" }} env.CRDS_PATH {{ "}}" }}
           key: ${{ "{{" }} env.CRDS_CONTEXT {{ "}}" }}
-{% endif %}
+{%- endif %}
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
       - uses: astral-sh/setup-uv@eac588ad8def6316056a12d4907a9d4d84ff7a3b # v7.3.0
-{% if cookiecutter.task_runner == 'none' %}
+{%- if cookiecutter.task_runner == 'none' %}
       - run: uv run --python=${{ "{{" }} matrix.python-version {{ "}}" }} --group test ${{ "{{" }} matrix.coverage && 'coverage run -m' || '' {{ "}}" }} pytest
-{% elif cookiecutter.task_runner == 'nox' %}
+{%- elif cookiecutter.task_runner == 'nox' %}
       - uses: wntrblm/nox@5a277b752f6094150e25237d47c34168e2b7526e # 2026.02.09
         with:
-            python-versions: ${{ "{{" }} runner.os != 'macOS' && needs.versions.supported_pythons || '3' {{ "}}" }}
-            session: "test${{ "{{" }} matrix.coverage && '_with_coverage' || '' {{ "}}" }} ${{ "{{" }} matrix.python-version {{ "}}" }}"
-{% endif %}
+            python-versions: ${{ "{{" }} runner.os != 'macOS' && needs.versions.outputs.supported_pythons || '3' {{ "}}" }}
+            session: test${{ "{{" }} matrix.coverage && '_with_coverage' || '' {{ "}}" }}
+{%- endif %}
       - if: matrix.coverage
         name: report coverage to summary
         run: |
-          uv run coverage combine 
+          uv run coverage combine
           echo '## Coverage Report' >> $GITHUB_STEP_SUMMARY
           uv run coverage report -i -m --format=markdown | tee -a $GITHUB_STEP_SUMMARY
-{% elif cookiecutter.task_runner == 'tox' %}
+{%- elif cookiecutter.task_runner == 'tox' %}
     uses: OpenAstronomy/github-actions-workflows/.github/workflows/tox.yml@ccd2f9f4a24f34ea1165a717af125260d93bb5c1  # v2.6.1
     with:
-{% if cookiecutter.crds_observatory != '' %}
+{%- if cookiecutter.crds_observatory != 'none' %}
       setenv: |
         CRDS_PATH: /tmp/data/crds_cache
-        CRDS_SERVER_URL: ${{ "{{" }} github.event_name == 'workflow_dispatch' && inputs.crds_server || 'https://jwst-crds.stsci.edu' {{ "}}" }}
-        CRDS_CONTEXT: ${{ "{{" }} needs.crds_context.outputs.context {{ "}}" }}
+        CRDS_SERVER_URL: ${{ "{{" }} 'https://{{ cookiecutter.crds_observatory }}-crds.stsci.edu' {{ "}}" }}
+        CRDS_CONTEXT: ${{ "{{" }} needs.latest_crds_context.outputs.context {{ "}}" }}
         CRDS_CLIENT_RETRY_COUNT: 3
         CRDS_CLIENT_RETRY_DELAY_SECONDS: 20
-{% endif %}
       cache-path: /tmp/data/crds_cache
-      cache-key: crds-${{ "{{" }} needs.crds_context.outputs.context {{ "}}" }}
+      cache-key: crds-${{ "{{" }} needs.latest_crds_context.outputs.context {{ "}}" }}
+{%- endif %}
       artifact-path: |
         results.xml
       fill: true
@@ -150,4 +142,4 @@ jobs:
           pytest-results-summary: true
           coverage: github
         - macos: py3
-{% endif %}
+{%- endif %}

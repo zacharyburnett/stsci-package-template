@@ -16,6 +16,7 @@ concurrency:
 
 jobs:
   test:
+    name: validate files for template combinations
     runs-on: ubuntu-latest
     steps:
       - uses: astral-sh/setup-uv@eac588ad8def6316056a12d4907a9d4d84ff7a3b # v7.3.0
@@ -30,7 +31,7 @@ jobs:
       matrix:
         directory: ["other-package", "python-package"]
         python_build_backend: ["hatchling", "setuptools"]
-        python_c_extensions: [false, true]
+        python_c_extensions: ["y", "n"]
         task_runner: ["none", "nox", "tox"]
         crds_observatory: ["none"]
         include:
@@ -42,6 +43,7 @@ jobs:
             python_build_backend: "hatchling"
             task_runner: "nox"
             crds_observatory: "roman"
+            python_c_extensions: "n"
           - directory: "python-package"
             python_build_backend: "hatchling"
             task_runner: "tox"
@@ -50,9 +52,10 @@ jobs:
             python_build_backend: "hatchling"
             task_runner: "tox"
             crds_observatory: "roman"
+            python_c_extensions: "n"
           - directory: "python-package"
             python_build_backend: "setuptools"
-            python_c_extensions: true
+            python_c_extensions: "y"
         exclude:
           - directory: "other-package"
             task_runner: "nox"
@@ -63,18 +66,27 @@ jobs:
           - directory: "other-package"
             python_build_backend: "setuptools"
           - directory: "other-package"
-            python_c_extensions: true
+            python_c_extensions: "y"
           - python_build_backend: "hatchling"
-            python_c_extensions: true
-    name: lint ${{ matrix.directory }}${{ matrix.directory == 'python-package' && format(' ({0}{1}{2}{3})', matrix.python_build_backend, matrix.python_c_extensions && ' with C extensions' || '', matrix.task_runner != 'none' && format(', {0}', matrix.task_runner) || '', matrix.crds_observatory != 'none' && format(', {0} CRDS', matrix.crds_observatory) || '') || '' }}
+            python_c_extensions: "y"
+    name: lint ${{ matrix.directory }}${{ matrix.directory == 'python-package' && format(' ({0}{1}{2}{3})', matrix.python_build_backend, matrix.python_c_extensions == 'y' && ' with C extensions' || '', matrix.task_runner != 'none' && format(', {0}', matrix.task_runner) || '', matrix.crds_observatory != 'none' && format(', {0} CRDS', matrix.crds_observatory) || '') || '' }}
     steps:
       - uses: astral-sh/setup-uv@eac588ad8def6316056a12d4907a9d4d84ff7a3b # v7.3.0
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
-      - run: uvx cookiecutter ${{ matrix.directory }} --no-input -o ../ project_name=test_${{ strategy.job-index }} publish_docs_to="readthedocs.io" ${{ matrix.directory == 'python-package' && format('task_runner={0}', matrix.task_runner) || '' }} ${{ matrix.directory == 'python-package' && format('python_build_backend={0}', matrix.python_build_backend) || '' }} ${{ matrix.directory == 'python-package' && format('python_c_extensions={0}', matrix.python_c_extensions) || '' }} ${{ matrix.directory == 'python-package' && format('crds_observatory={0}', matrix.crds_observatory) || '' }}
-      - run: bash <(curl https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
-      - run: ./actionlint ../test_${{ strategy.job-index }}/.github/workflows/*
-      - run: uvx yamllint ../test_${{ strategy.job-index }}/.readthedocs.yaml
+      - name: render ${{ matrix.directory }} template with Cookiecutter
+        run: uvx cookiecutter ${{ matrix.directory }} --no-input -o ../ project_name=test_${{ strategy.job-index }} ${{ matrix.directory == 'python-package' && format('publish_docs_to="readthedocs.io"  task_runner={0} python_build_backend={1} python_c_extensions={2} crds_observatory={3}', matrix.task_runner, matrix.python_build_backend, matrix.python_c_extensions, matrix.crds_observatory) || '' }}
+      - name: lint YAML files
+        run: uvx yamllint -d relaxed ../test_${{ strategy.job-index }}/
+      - name: lint GitHub Actions workflows
+        run: |
+          bash <(curl https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
+          ./actionlint -color -ignore 'SC2086' -ignore 'SC2046' ../test_${{ strategy.job-index }}/.github/workflows/*
+      - name: format Python files
+        run: uvx ruff format ../test_${{ strategy.job-index }}/ --check
+      - name: lint Python files
+        run: uvx ruff check ../test_${{ strategy.job-index }}/
       - if: matrix.directory == 'python-package'
+        name: lint pyproject.toml
         run: uvx tomllint ../test_${{ strategy.job-index }}/pyproject.toml

@@ -1,7 +1,7 @@
 name: build
 
 on:
-  pull_request:
+  pull_request_target:
   release:
     types: [released]
   workflow_dispatch:
@@ -12,17 +12,17 @@ concurrency:
 
 jobs:
   build:
-{% if not cookiecutter.python_c_extensions %}
+{%- if not cookiecutter.python_c_extensions %}
     runs-on: ubuntu-latest
-{% else %}
+{%- else %}
     strategy:
       matrix:
         target:
           - cp3*-manylinux_x86_64
           - cp3*-macosx_x86_64
           - cp3*-macosx_arm64
-    runs-on: ${{ "{{" }} contains(matrix.target, 'macos') && macos-latest || contains(matrix.target, 'win') && 'windows-latest' || 'ubuntu-latest' {{ "}}" }}
-{% endif %}
+    runs-on: ${{ "{{" }} contains(matrix.target, 'macos') && 'macos-latest' || contains(matrix.target, 'win') && 'windows-latest' || 'ubuntu-latest' {{ "}}" }}
+{%- endif %}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
@@ -32,7 +32,7 @@ jobs:
         with:
           # Cache disabled to prevent cache-poisoning attacks on release artifacts.
           enable-cache: false
-{% if cookiecutter.python_c_extensions %}
+{%- if cookiecutter.python_c_extensions %}
       - if: ${{ "{{" }} runner.os == 'Linux' {{ "}}" }}
         uses: docker/setup-qemu-action@c7c53464625b32c7a7e944ae62b3e17d2b600130 # v3.7.0
         with:
@@ -45,13 +45,14 @@ jobs:
           CIBW_BUILD_FRONTEND: build[uv]
           CIBW_BUILD: ${{ "{{" }} matrix.target {{ "}}" }}
           CIBW_ARCHS: ${{ "{{" }} runner.os == 'macOS' && 'arm64 x86_64' || 'auto' {{ "}}" }}
-{% endif %}
-      - run: uv build --sdist {%- if not cookiecutter.python_c_extensions -%} --wheel{%- endif %}
+{%- endif %}
+      - run: uv build --sdist{%- if not cookiecutter.python_c_extensions %} --wheel{%- endif %}
       - uses: actions/upload-artifact@v4
         with:
-          name: dist{%- if not cookiecutter.python_c_extensions -%}-${{ "{{" }} matrix.target {{ "}}" }}{%- endif %}
+          name: dist{%- if cookiecutter.python_c_extensions -%}-${{ "{{" }} matrix.target {{ "}}" }}{%- endif %}
           path: ./dist/
   publish:
+    if: (github.event_name == 'release') && (github.event.action == 'released')
     needs: [build]
     runs-on: ubuntu-latest
     permissions:

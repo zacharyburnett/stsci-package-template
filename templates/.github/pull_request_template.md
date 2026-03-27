@@ -5,14 +5,19 @@
 <!-- Closes # -->
 
 <!-- Describe your changes here: -->
+
 ## Description
+
 This change ...
 
 <!-- If you can't perform these tasks due to permissions, reach out to a maintainer. -->
+
 ## Tasks
+
 {% if cookiecutter.manage_changelog_with_towncrier %}
+
 - [ ] If this change affects user-facing code or public API, add news fragment file(s) to `changes/` (see [the changelog instructions]({{ cookiecutter.repository_url }}/blob/main/changes/README.md)).
       Otherwise, add the `no-changelog-entry-needed` label.
-{% endif %}
+      {% endif %}
 - [ ] update or add relevant tests
 - [ ] update relevant docstrings and / or `docs/` page

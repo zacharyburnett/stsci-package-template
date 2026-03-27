@@ -2,65 +2,64 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
 import importlib
+import tomllib
 from datetime import datetime
 from pathlib import Path
-
-import tomllib
 
 # -- Project information -----------------------------------------------------
 
 with open(Path(__file__).parent.parent / "pyproject.toml", "rb") as project_metadata_file:
-    project_metadata = tomllib.load(project_metadata_file)['project']
+    project_metadata = tomllib.load(project_metadata_file)["project"]
 
-project = project_metadata['name']
+project = project_metadata["name"]
 author = project_metadata["authors"][0]["name"]
-copyright = f'{datetime.datetime.today().year}, {author}'
+copyright = f"{datetime.today().year}, {author}"
 
-package = importlib.import_module(project_metadata['name'])
+package = importlib.import_module(project_metadata["name"])
 try:
     release = package.__version__
-    version = package.__version__.split('-', 1)[0]
+    version = package.__version__.split("-", 1)[0]
 except AttributeError:
-    release = 'dev'
-    version = 'dev'
+    release = "dev"
+    version = "dev"
 
 # -- General configuration ---------------------------------------------------
 
 extensions = [
-    'numfig',
-    'numpydoc',
-    'pytest_doctestplus.sphinx.doctestplus',
-    'sphinx.ext.autodoc',
-    'sphinx.ext.autosummary',
-    'sphinx.ext.coverage',
-    'sphinx.ext.inheritance_diagram',
-    'sphinx.ext.intersphinx',
-    'sphinx.ext.mathjax',
-    'sphinx.ext.todo',
-    'sphinx.ext.viewcode',
-    'sphinx_automodapi.autodoc_enhancements',
-    'sphinx_automodapi.automodapi',
-    'sphinx_automodapi.automodsumm',
-    'sphinx_automodapi.smart_resolver',
-    'sphinxcontrib.jquery',
+    "numfig",
+    "numpydoc",
+    "pytest_doctestplus.sphinx.doctestplus",
+    "sphinx.ext.autodoc",
+    "sphinx.ext.autosummary",
+    "sphinx.ext.coverage",
+    "sphinx.ext.inheritance_diagram",
+    "sphinx.ext.intersphinx",
+    "sphinx.ext.mathjax",
+    "sphinx.ext.todo",
+    "sphinx.ext.viewcode",
+    "sphinx_automodapi.autodoc_enhancements",
+    "sphinx_automodapi.automodapi",
+    "sphinx_automodapi.automodsumm",
+    "sphinx_automodapi.smart_resolver",
+    "sphinxcontrib.jquery",
 ]
 
 intersphinx_mapping = {
-    'asdf': ('https://asdf.readthedocs.io/en/stable/', None),
-    'astropy': ('https://docs.astropy.org/en/stable/', None),
-    'drizzle': ('https://spacetelescope-drizzle.readthedocs.io/en/latest/', None),
-    'gwcs': ('https://gwcs.readthedocs.io/en/stable/', None),
-    'matplotlib': ('https://matplotlib.org/', None),
-    'numpy': ('https://numpy.org/devdocs', None),
-    'photutils': ('https://photutils.readthedocs.io/en/stable/', None),
-    'python': ('https://docs.python.org/3/', None),
-    'requests': ('https://requests.readthedocs.io/en/latest/', None),
-    'scipy': ('https://scipy.github.io/devdocs', None),
-    'stcal': ('https://stcal.readthedocs.io/en/latest/', None),
-    'stdatamodels': ('https://stdatamodels.readthedocs.io/en/latest/', None),
-    'stpipe': ('https://stpipe.readthedocs.io/en/latest/', None),
-    'synphot': ('https://synphot.readthedocs.io/en/latest/', None),
-    'tweakwcs': ('https://tweakwcs.readthedocs.io/en/latest/', None),
+    "asdf": ("https://asdf.readthedocs.io/en/stable/", None),
+    "astropy": ("https://docs.astropy.org/en/stable/", None),
+    "drizzle": ("https://spacetelescope-drizzle.readthedocs.io/en/latest/", None),
+    "gwcs": ("https://gwcs.readthedocs.io/en/stable/", None),
+    "matplotlib": ("https://matplotlib.org/", None),
+    "numpy": ("https://numpy.org/devdocs", None),
+    "photutils": ("https://photutils.readthedocs.io/en/stable/", None),
+    "python": ("https://docs.python.org/3/", None),
+    "requests": ("https://requests.readthedocs.io/en/latest/", None),
+    "scipy": ("https://scipy.github.io/devdocs", None),
+    "stcal": ("https://stcal.readthedocs.io/en/latest/", None),
+    "stdatamodels": ("https://stdatamodels.readthedocs.io/en/latest/", None),
+    "stpipe": ("https://stpipe.readthedocs.io/en/latest/", None),
+    "synphot": ("https://synphot.readthedocs.io/en/latest/", None),
+    "tweakwcs": ("https://tweakwcs.readthedocs.io/en/latest/", None),
 }
 intersphinx_disabled_domains = ["std"]
 
@@ -68,7 +67,7 @@ templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 # reST default role (used for this markup: `text`) to use for all documents
-default_role = 'obj'
+default_role = "obj"
 
 # -- Options for HTML output -------------------------------------------------
 
@@ -82,11 +81,11 @@ html_theme_options = {
     # "sidebarlinkcolor": "black",
     # "headbgcolor": "white",
 }
-html_logo = '_static/stsci_pri_combo_mark_white.png'
+html_logo = "_static/stsci_pri_combo_mark_white.png"
 html_static_path = ["_static"]
 html_css_files = ["custom.css"]
-html_last_updated_fmt = '%b %d, %Y'
-html_sidebars = {'**': ['globaltoc.html', 'relations.html', 'searchbox.html']}
+html_last_updated_fmt = "%b %d, %Y"
+html_sidebars = {"**": ["globaltoc.html", "relations.html", "searchbox.html"]}
 html_domain_indices = True
 html_use_index = True
 
@@ -100,7 +99,7 @@ numpydoc_show_class_members = False
 
 autosummary_generate = True
 
-automodapi_toctreedirnm = 'api'
+automodapi_toctreedirnm = "api"
 
 # Class documentation should contain *both* the class docstring and the __init__ docstring
 autoclass_content = "both"
@@ -109,16 +108,16 @@ autoclass_content = "both"
 graphviz_output_format = "svg"
 
 graphviz_dot_args = [
-    '-Nfontsize=10',
-    '-Nfontname=Helvetica Neue, Helvetica, Arial, sans-serif',
-    '-Efontsize=10',
-    '-Efontname=Helvetica Neue, Helvetica, Arial, sans-serif',
-    '-Gfontsize=10',
-    '-Gfontname=Helvetica Neue, Helvetica, Arial, sans-serif'
+    "-Nfontsize=10",
+    "-Nfontname=Helvetica Neue, Helvetica, Arial, sans-serif",
+    "-Efontsize=10",
+    "-Efontname=Helvetica Neue, Helvetica, Arial, sans-serif",
+    "-Gfontsize=10",
+    "-Gfontname=Helvetica Neue, Helvetica, Arial, sans-serif",
 ]
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'default'
+pygments_style = "default"
 
 # -- Options for linkcheck ----------------------------------------------
 
