@@ -11,7 +11,7 @@ template defines best practices and boilerplate for STScI packages.
 To initialize a new package from this template, run [`cruft create`](https://cruft.github.io/cruft):
 
 ```shell
-cruft create https://github.com/spacetelescope/stsci-package-template.git
+cruft create https://github.com/spacetelescope/stsci-package-template.git --directory python-package
 ```
 
 You can then use [`cruft update`](https://cruft.github.io/cruft/#updating-a-project)
