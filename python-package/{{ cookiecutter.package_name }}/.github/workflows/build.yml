@@ -46,7 +46,7 @@ jobs:
           CIBW_BUILD: ${{ "{{" }} matrix.target {{ "}}" }}
           CIBW_ARCHS: ${{ "{{" }} runner.os == 'macOS' && 'arm64 x86_64' || 'auto' {{ "}}" }}
 {%- endif %}
-      - run: uv build --sdist{%- if not cookiecutter.python_c_extensions %} --wheel{%- endif %}
+      - run: uv run --with build python -m build --sdist{%- if not cookiecutter.python_c_extensions %} --wheel{%- endif %}
       - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: dist{%- if cookiecutter.python_c_extensions -%}-${{ "{{" }} matrix.target {{ "}}" }}{%- endif %}
