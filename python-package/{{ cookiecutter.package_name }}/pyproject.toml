@@ -64,7 +64,7 @@ dynamic = ["version"]
 requires-python = "{{ cookiecutter.python_version }}"
 dependencies = []
 
-[dependency-groups]
+[project.optional-dependencies]
 test = ["pytest{%- if cookiecutter.python_version.split('=')[1].split('.')[1]|int >= 10 -%}>=9{%- endif -%}"]
 docs = ["numpydoc", "sphinx", "sphinx-automodapi", "sphinx-rtd-theme"]
 
