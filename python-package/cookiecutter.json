@@ -8,7 +8,7 @@
   "task_runner": ["none", "nox", "tox"],
   "python_version": ">=3.12",
   "python_c_extensions": false,
-  "python_build_backend": ["hatchling", "setuptools"],
+  "python_build_backend": ["setuptools", "hatchling"],
   "crds_observatory": ["none", "roman", "jwst", "hst"],
   "__prompts__": {
     "project_name": "name of project",
@@ -29,9 +29,7 @@
     },
     "python_version": "Python version requirements",
     "python_build_backend": {
-      "__prompt__": "backend to build package with",
-      "hatchling": "Hatchling",
-      "setuptools": "setuptools"
+      "__prompt__": "backend to build package with"
     },
     "python_c_extensions": "build C extensions?",
     "crds_observatory": {
