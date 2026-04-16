@@ -95,4 +95,4 @@ jobs:
         run: ruff check ../test_${{ strategy.job-index }}/
       - if: matrix.directory == 'python-package'
         name: lint pyproject.toml
-        run: tomllint ../test_${{ strategy.job-index }}/pyproject.toml
+        run: tombi lint ../test_${{ strategy.job-index }}/pyproject.toml
