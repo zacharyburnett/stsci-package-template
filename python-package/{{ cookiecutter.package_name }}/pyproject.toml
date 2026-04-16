@@ -23,7 +23,7 @@ documentation = "https://spacetelescope.github.io/{{ cookiecutter.package_name }
 repository = "{{ cookiecutter.repository_url }}"
 
 [project.optional-dependencies]
-docs = ["numpydoc", "sphinx", "sphinx-automodapi", "sphinx-rtd-theme"]
+docs = ["numfig", "numpydoc", "sphinx", "sphinx-automodapi", "sphinx-rtd-theme"]
 test = [
   "pytest{%- if cookiecutter.python_version.split('=')[1].split('.')[1]|int >= 10 -%}>=9{%- endif -%}"
 ]
