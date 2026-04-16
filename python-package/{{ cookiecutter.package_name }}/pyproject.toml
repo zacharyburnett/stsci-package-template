@@ -24,9 +24,7 @@ repository = "{{ cookiecutter.repository_url }}"
 
 [project.optional-dependencies]
 docs = ["numfig", "numpydoc", "sphinx", "sphinx-automodapi", "sphinx-rtd-theme"]
-test = [
-  "pytest{%- if cookiecutter.python_version.split('=')[1].split('.')[1]|int >= 10 -%}>=9{%- endif -%}"
-]
+test = ["pytest{%- if cookiecutter.python_version.split('=')[1].split('.')[1]|int >= 10 -%}>=9{%- endif -%}"]
 
 [build-system]
 {%- if cookiecutter.python_build_backend == "hatchling" %}
@@ -71,6 +69,19 @@ source = "vcs"
 version_scheme = "release-branch-semver"
 {%- endif %}
 
+[tool.numpydoc_validation]
+checks = [
+  "all",
+  "EX01",  # No examples section found
+  "SA01",  # See Also section not found
+  "ES01",  # No extended summary found
+  "GL08",  # Object does not have a docstring. Ruff catches these, and allows more granular ignores.
+  "PR01",  # Parameters not documented. Already caught by ruff.
+  "PR09",  # Parameter description should finish with a period
+  "RT02",  # First line of return should contain only the type
+  "RT05",  # Return value description should finish with a period
+]
+
 [tool.pytest{%- if cookiecutter.python_version.split('=')[1].split('.')[1]|int < 10 -%}.ini_options{%- endif -%}]
 minversion = "9"
 
@@ -87,6 +98,6 @@ select = [
   "UP",  # pyupgrade
 ]
 
-{%- if cookiecutter.python_build_backend == "setuptools" %}
+{% if cookiecutter.python_build_backend == "setuptools" -%}
 [tool.setuptools_scm]
 {%- endif %}

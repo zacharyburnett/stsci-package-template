@@ -1,47 +1,47 @@
 {%- if cookiecutter.manage_changelog_with_towncrier -%}
 breaking-change:
   - changed-files:
-    - any-glob-to-any-file:
-      - 'changes/*.breaking.rst'
+      - any-glob-to-any-file:
+          - "changes/*.breaking.rst"
 
 feature:
   - changed-files:
-    - any-glob-to-any-file:
-      - 'changes/*.feature.rst'
+      - any-glob-to-any-file:
+          - "changes/*.feature.rst"
 
 fix:
   - changed-files:
-    - any-glob-to-any-file:
-      - 'changes/*.fix.rst'
+      - any-glob-to-any-file:
+          - "changes/*.fix.rst"
 {% endif %}
 documentation:
   - changed-files:
-    - all-globs-to-any-file: ['*.rst', '!CHANGES.rst'{%- if cookiecutter.manage_changelog_with_towncrier -%}, '!changes/*'{%- endif -%}]
-    - any-glob-to-any-file:
-      - 'docs/**/*'
-      - '*.md'
-      - '.readthedocs.yaml'
-      - 'LICENSE'
+      - all-globs-to-any-file: ["*.rst", "!CHANGES.rst"{%- if cookiecutter.manage_changelog_with_towncrier -%}, "!changes/*"{%- endif -%}]
+      - any-glob-to-any-file:
+          - "docs/**/*"
+          - "*.md"
+          - ".readthedocs.yaml"
+          - "LICENSE"
 {%- if cookiecutter.manage_changelog_with_towncrier %}
-      - 'changes/*.docs.rst'
+          - "changes/*.docs.rst"
 {%- endif %}
 
 packaging:
   - changed-files:
-    - any-glob-to-any-file:
-      - 'pyproject.toml'
+      - any-glob-to-any-file:
+          - "pyproject.toml"
 
 # --------------------------------------- testing ---------------------------------------
 
 automation:
   - changed-files:
-    - any-glob-to-any-file:
-      - '.github/**'
+      - any-glob-to-any-file:
+          - ".github/**"
 
 testing:
   - changed-files:
-    - any-glob-to-any-file:
-      - '**/tests/**'
-      - '**/regtest/**'
-      - '.github/workflows/test*.yml'
-      - '**/conftest.py'
+      - any-glob-to-any-file:
+          - "**/tests/**"
+          - "**/regtest/**"
+          - ".github/workflows/test*.yml"
+          - "**/conftest.py"

@@ -4,11 +4,13 @@
 In order for a change you make to the code to be accepted and merged, that change must pass existing tests, as well as any new tests you write that cover new functionality.
 
 `{{ cookiecutter.package_name }}` uses `pytest` to define and run tests. To install `pytest` and other required testing tools to your [development environment](./CONTRIBUTING.md#creating-a-development-environment), install `{{ cookiecutter.package_name }}` with the `test` extra:
+
 ```shell
 pip install -e .[test]
 ```
 
 To run tests, simply run `pytest`:
+
 ```shell
 pytest
 ```
@@ -20,4 +22,3 @@ See the [`pytest` documentation](https://docs.pytest.org) for more instructions 
 > [!TIP]
 > You can control where test results are written by adding `--basetemp=<PATH>` to your `pytest` command.
 > `pytest` will wipe this directory clean for each test session, so make sure it is a scratch area.
-
