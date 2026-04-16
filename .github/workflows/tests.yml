@@ -19,11 +19,14 @@ jobs:
     name: validate files for template combinations
     runs-on: ubuntu-latest
     steps:
-      - uses: astral-sh/setup-uv@eac588ad8def6316056a12d4907a9d4d84ff7a3b # v7.3.0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3"
+      - run: pip install cookiecutter pytest pytest-xdist
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
-      - run: uv run --with pytest,cookiecutter,pytest-xdist pytest tests/test_template_combinations.py -n auto
+      - run: pytest tests/test_template_combinations.py -n auto
   lint:
     runs-on: ubuntu-latest
     strategy:
@@ -71,22 +74,25 @@ jobs:
             python_c_extensions: "y"
     name: lint ${{ matrix.directory }}${{ matrix.directory == 'python-package' && format(' ({0}{1}{2}{3})', matrix.python_build_backend, matrix.python_c_extensions == 'y' && ' with C extensions' || '', matrix.task_runner != 'none' && format(', {0}', matrix.task_runner) || '', matrix.crds_observatory != 'none' && format(', {0} CRDS', matrix.crds_observatory) || '') || '' }}
     steps:
-      - uses: astral-sh/setup-uv@eac588ad8def6316056a12d4907a9d4d84ff7a3b # v7.3.0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3"
+      - run: pip install cookiecutter yamllint ruff tombi
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
       - name: render ${{ matrix.directory }} template with Cookiecutter
-        run: uvx cookiecutter ${{ matrix.directory }} --no-input -o ../ project_name=test_${{ strategy.job-index }} ${{ matrix.directory == 'python-package' && format('publish_docs_to="readthedocs.io"  task_runner={0} python_build_backend={1} python_c_extensions={2} crds_observatory={3}', matrix.task_runner, matrix.python_build_backend, matrix.python_c_extensions, matrix.crds_observatory) || '' }}
+        run: cookiecutter ${{ matrix.directory }} --no-input -o ../ project_name=test_${{ strategy.job-index }} ${{ matrix.directory == 'python-package' && format('publish_docs_to="readthedocs.io"  task_runner={0} python_build_backend={1} python_c_extensions={2} crds_observatory={3}', matrix.task_runner, matrix.python_build_backend, matrix.python_c_extensions, matrix.crds_observatory) || '' }}
       - name: lint YAML files
-        run: uvx yamllint -d relaxed ../test_${{ strategy.job-index }}/
+        run: yamllint -d relaxed ../test_${{ strategy.job-index }}/
       - name: lint GitHub Actions workflows
         run: |
           bash <(curl https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
           ./actionlint -color -ignore 'SC2086' -ignore 'SC2046' ../test_${{ strategy.job-index }}/.github/workflows/*
       - name: format Python files
-        run: uvx ruff format ../test_${{ strategy.job-index }}/ --check
+        run: ruff format ../test_${{ strategy.job-index }}/ --check
       - name: lint Python files
-        run: uvx ruff check ../test_${{ strategy.job-index }}/
+        run: ruff check ../test_${{ strategy.job-index }}/
       - if: matrix.directory == 'python-package'
         name: lint pyproject.toml
-        run: uvx tomllint ../test_${{ strategy.job-index }}/pyproject.toml
+        run: tomllint ../test_${{ strategy.job-index }}/pyproject.toml

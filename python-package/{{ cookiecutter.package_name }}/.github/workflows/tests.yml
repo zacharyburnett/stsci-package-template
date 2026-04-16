@@ -34,10 +34,12 @@ jobs:
           repository: spacetelescope/stsci-package-template
           persist-credentials: false
           path: ./stsci_package_template/
-      - uses: astral-sh/setup-uv@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3"
       - name: derive supported versions of Python from source code
         id: supported_pythons
-        run: echo versions=$(uv run ./stsci_package_template/tools/supported_pythons.py  --package-source=./{{ cookiecutter.package_name }}/) > $GITHUB_OUTPUT
+        run: echo versions=$(pipx ./stsci_package_template/tools/supported_pythons.py --package-source=./{{ cookiecutter.package_name }}/) > $GITHUB_OUTPUT
     outputs:
       supported_pythons: ${{ "{{" }} steps.supported_pythons.outputs.versions {{ "}}" }}
 {%- endif %}
@@ -97,9 +99,12 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
-      - uses: astral-sh/setup-uv@eac588ad8def6316056a12d4907a9d4d84ff7a3b # v7.3.0
+      - uses: actions/setup-python@v6
 {%- if cookiecutter.task_runner == 'none' %}
-      - run: uv run --python=${{ "{{" }} matrix.python-version {{ "}}" }} --group test ${{ "{{" }} matrix.coverage && 'coverage run -m' || '' {{ "}}" }} pytest
+        with:
+          python-version: ${{ "{{" }} matrix.python-version {{ "}}" }}
+      - run: pip install .[test] ${{ "{{" }} matrix.coverage && 'coverage pytest-cov' || '' {{ "}}" }}
+      - run: pytest ${{ "{{" }} matrix.coverage && '--cov' || '' {{ "}}" }} 
 {%- elif cookiecutter.task_runner == 'nox' %}
       - uses: wntrblm/nox@5a277b752f6094150e25237d47c34168e2b7526e # 2026.02.09
         with:
@@ -109,9 +114,9 @@ jobs:
       - if: matrix.coverage
         name: report coverage to summary
         run: |
-          uv run coverage combine
+          coverage combine
           echo '## Coverage Report' >> $GITHUB_STEP_SUMMARY
-          uv run coverage report -i -m --format=markdown | tee -a $GITHUB_STEP_SUMMARY
+          coverage report -i -m --format=markdown | tee -a $GITHUB_STEP_SUMMARY
 {%- elif cookiecutter.task_runner == 'tox' %}
     uses: OpenAstronomy/github-actions-workflows/.github/workflows/tox.yml@ccd2f9f4a24f34ea1165a717af125260d93bb5c1  # v2.6.1
     with:
