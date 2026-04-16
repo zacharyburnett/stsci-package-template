@@ -77,22 +77,14 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: "3"
-      - run: pip install cookiecutter yamllint ruff tombi
+      - run: pip install cookiecutter prek
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
       - name: render ${{ matrix.directory }} template with Cookiecutter
         run: cookiecutter ${{ matrix.directory }} --no-input -o ../ project_name=test_${{ strategy.job-index }} ${{ matrix.directory == 'python-package' && format('publish_docs_to="readthedocs.io"  task_runner={0} python_build_backend={1} python_c_extensions={2} crds_observatory={3}', matrix.task_runner, matrix.python_build_backend, matrix.python_c_extensions, matrix.crds_observatory) || '' }}
-      - name: lint YAML files
-        run: yamllint -d relaxed ../test_${{ strategy.job-index }}/
-      - name: lint GitHub Actions workflows
+      - name: run linters and formatters
         run: |
-          bash <(curl https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
-          ./actionlint -color -ignore 'SC2086' -ignore 'SC2046' ../test_${{ strategy.job-index }}/.github/workflows/*
-      - name: format Python files
-        run: ruff format ../test_${{ strategy.job-index }}/ --check
-      - name: lint Python files
-        run: ruff check ../test_${{ strategy.job-index }}/
-      - if: matrix.directory == 'python-package'
-        name: lint pyproject.toml
-        run: tombi lint ../test_${{ strategy.job-index }}/pyproject.toml
+          cd ../test_${{ strategy.job-index }}/
+          git init
+          prek run --all-files --verbose --show-diff-on-failure
