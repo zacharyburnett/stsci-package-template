@@ -85,6 +85,11 @@ def test_python_package_template(
         for filename in READTHEDOCS_FILENAMES:
             assert not (expected_package_dir / filename).exists()
 
+    if task_runner == "tox":
+        assert (expected_package_dir / "tox.toml").exists()
+    else:
+        assert not (expected_package_dir / "tox.toml").exists()
+
     if task_runner == "nox":
         assert (expected_package_dir / "noxfile.py").exists()
     else:
