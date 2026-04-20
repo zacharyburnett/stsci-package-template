@@ -22,7 +22,7 @@
       "readthedocs.io": "yes, to ReadTheDocs"
     },
     "task_runner": {
-      "__prompt__": "set up a task runner?",
+      "__prompt__": "set up a task runner for running tests and / or formatters?",
       "none": "no",
       "nox": "yes, Nox (Python task runner with Python syntax)",
       "tox": "yes, Tox (virtualenv-based Python task runner with domain-specific INI syntax)"
