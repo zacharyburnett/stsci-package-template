@@ -1,7 +1,7 @@
 # Writing and maintaining documentation
 
 Documentation for `{{ cookiecutter.package_name }}` is written in [Sphinx reStructuredText (`.rst`)](https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html)
-in this `docs/` directory, and is hosted online at {%- if cookiecutter.publish_docs_to == 'readthedocs.io' -%}https://{{ cookiecutter.package_name }}.readthedocs.io{%- elif cookiecutter.publish_docs_to == 'github.io' -%}https://{{ cookiecutter.github_username }}.github.io/{{ cookiecutter.package_name }}{%- endif -%}
+in this `docs/` directory, and is hosted online at {%- if cookiecutter.publish_docs_to == 'readthedocs.io' -%}https://{{ cookiecutter.package_name }}.readthedocs.io{%- elif cookiecutter.publish_docs_to == 'github.io' -%}https://spacetelescope.github.io/{{ cookiecutter.package_name }}{%- endif -%}
 
 ### Building documentation locally
 
