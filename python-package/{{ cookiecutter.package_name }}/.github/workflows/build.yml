@@ -29,6 +29,8 @@ jobs:
           fetch-tags: true
           persist-credentials: false
       - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3"
 {%- if cookiecutter.python_c_extensions %}
       - if: ${{ "{{" }} runner.os == 'Linux' {{ "}}" }}
         uses: docker/setup-qemu-action@c7c53464625b32c7a7e944ae62b3e17d2b600130 # v3.7.0
