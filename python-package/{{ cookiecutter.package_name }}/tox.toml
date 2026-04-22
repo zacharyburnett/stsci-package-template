@@ -1,18 +1,12 @@
-[tox]
-requires = ["tox>=4.19"]
+requires = ["tox>=4.50"]
+env_list = { product = [
+  { prefix = "py3", start = 11, stop = 14 },
+  ["cov"],
+  ["xdist"],
+] }
 
-[tox.env_run_base]
+[env_run_base]
 factors = [["cov"], ["xdist"]]
-deps = [
-  "pytest>=9",
-  { replace = "if", condition = "factor.cov", then = [
-    "pytest-cov",
-  ], extend = true },
-  { replace = "if", condition = "factor.xdist", then = [
-    "pytest-xdist",
-  ], extend = true },
-]
-dependency_groups = ["test"]
 pass_env = [
   "TOXENV",
   "CI",
@@ -24,7 +18,12 @@ pass_env = [
   "CRDS_*",
   "TEST_BIGDATA",
 ]
-commands_pre = [["{list_dependencies_command}"]]
+deps = [
+  "pytest>=9",
+  { replace = "if", condition = "factor.cov", then = "pytest-cov" },
+  { replace = "if", condition = "factor.xdist", then = "pytest-xdist" },
+]
+extras = ["test"]
 commands = [
   [
     "pytest",
@@ -39,6 +38,6 @@ commands = [
       "--num-processes",
       "auto",
     ], extend = true },
-    "{posargs}",
+    { replace = "posargs", extend = true }
   ],
 ]
