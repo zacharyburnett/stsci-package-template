@@ -80,11 +80,6 @@ repos:
         args:
           - --fix
           - --show-fixes
-  # type checking
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.19.1
-    hooks:
-      - id: mypy
   # validate numpy-style docstrings
   - repo: https://github.com/numpy/numpydoc
     rev: v1.10.0

@@ -170,7 +170,9 @@ We use [Codespell](https://github.com/codespell-project/codespell) to check for 
 
 ### PEP-compliant type hints
 
-Type hints are _not_ required for contributions. If type hints are used, though, their compliance with [PEP-484](https://peps.python.org/pep-0484/) is enforced with [`mypy`](https://mypy.readthedocs.io/en/stable/index.html).
+Type hints are _not_ required for contributions.
+If type hints are used, though, you can enforce their [PEP-484](https://peps.python.org/pep-0484/)
+compliance by using [`mypy`](https://mypy.readthedocs.io/en/stable/index.html).
 
 ## Writing and maintaining documentation
 
