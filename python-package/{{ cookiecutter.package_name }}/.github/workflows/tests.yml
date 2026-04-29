@@ -39,7 +39,7 @@ jobs:
           python-version: "3"
       - name: derive supported versions of Python from source code
         id: supported_pythons
-        run: echo versions=$(pipx ./stsci_package_template/tools/supported_pythons.py --package-source=./{{ cookiecutter.package_name }}/) > $GITHUB_OUTPUT
+        run: echo versions=$(pipx run ./stsci_package_template/tools/supported_pythons.py --package-source=./{{ cookiecutter.package_name }}/) >> $GITHUB_OUTPUT
     outputs:
       supported_pythons: ${{ "{{" }} steps.supported_pythons.outputs.versions {{ "}}" }}
 {%- endif %}
@@ -78,7 +78,7 @@ jobs:
 {%- if cookiecutter.task_runner == 'none' %}
             python-version: "3"
 {%- endif %}
-    name: run tests (Python ${{ "{{" }} {%- if cookiecutter.task_runner == 'nox' -%}needs.versions.outputs.supported_pythons{%- else -%}matrix.python-version{%- endif -%} {{ "}}" }})
+    name: run tests (Python ${{ "{{" }} {%- if cookiecutter.task_runner == 'nox' -%}needs.versions.outputs.supported_pythons{%- else -%}matrix.python-version{%- endif -%} {{ "}}" }}, ${{ "{{" }} matrix.runs-on {{ "}}" }})
     runs-on: ${{ "{{" }} matrix.runs-on {{ "}}" }}
 {%- if cookiecutter.crds_observatory != 'none' %}
     env:

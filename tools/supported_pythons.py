@@ -35,14 +35,14 @@ def supported_pythons(
                 with open(pyproject_toml_filename, "rb") as pyproject_toml_file:
                     pyproject_toml = tomli.load(pyproject_toml_file)
                 if "project" in pyproject_toml:
-                    project_metadata = pyproject_toml["table"]
-                    if "requires_python" in project_metadata:
+                    project_metadata = pyproject_toml["project"]
+                    if "requires-python" in project_metadata:
                         python_version_requirements = SpecifierSet(
                             project_metadata["requires-python"]
                         )
                     else:
                         raise KeyError(
-                            "`project.requires_python` not found in `pyproject.toml`; ensure your package conforms to PEP621"
+                            "`project.requires-python` not found in `pyproject.toml`; ensure your package conforms to PEP621"
                         )
                 else:
                     raise KeyError(
@@ -63,7 +63,11 @@ def supported_pythons(
             warnings.warn("falling back to current Python versions...")
             supported_versions = current_python_versions
 
-    return supported_versions
+    print(
+        "["
+        + ", ".join([f'"{version}"' for version in reversed(supported_versions)])
+        + "]"
+    )
 
 
 def current_pythons(no_eoas: bool = False) -> list[Version]:
@@ -82,4 +86,4 @@ def current_pythons(no_eoas: bool = False) -> list[Version]:
 
 
 if __name__ == "__main__":
-    print(", ".join([str(version) for version in reversed(supported_pythons())]))
+    supported_pythons()
