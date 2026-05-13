@@ -14,9 +14,8 @@ COMMON_FILENAMES = [
     ".gitignore",
     "LICENSE.txt",
     "README.md",
-    "docs/assets/stsci_logo.png",
-    "docs/assets/stsci_logo_with_name.png",
-    "docs/assets/stsci_name.png",
+    "docs/_static/stsci_pri_combo_mark_dark_bkgd.png",
+    "docs/_static/stsci_pri_combo_mark_horizonal_white_bkgd.png",
 ]
 READTHEDOCS_FILENAMES = [".readthedocs.yaml"]
 TOWNCRIER_FILENAMES = [

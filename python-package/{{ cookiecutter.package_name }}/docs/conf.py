@@ -75,13 +75,9 @@ html_theme = "sphinx_rtd_theme"
 html_theme_options = {
     "collapse_navigation": True,
     "sticky_navigation": False,
-    # "nosidebar": "false",
-    # "sidebarbgcolor": "#4db8ff",
-    # "sidebartextcolor": "black",
-    # "sidebarlinkcolor": "black",
-    # "headbgcolor": "white",
+    "style_external_links": True,
 }
-html_logo = "_static/stsci_pri_combo_mark_white.png"
+html_logo = "_static/stsci_pri_combo_mark_dark_bkgd.png"
 html_static_path = ["_static"]
 html_css_files = ["custom.css"]
 html_last_updated_fmt = "%b %d, %Y"

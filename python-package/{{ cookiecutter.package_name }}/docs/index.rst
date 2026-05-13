@@ -1,11 +1,3 @@
-.. image:: assets/stsci_logo.png
-   :width: 15%
-   :target: https://stsci.edu
-
-.. image:: assets/stsci_name.png
-   :width: 68%
-   :target: https://stsci.edu
-
 ===============================
 {{ cookiecutter.project_name }}
 ===============================
