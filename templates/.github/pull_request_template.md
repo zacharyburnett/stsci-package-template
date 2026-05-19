@@ -14,9 +14,16 @@ This change ...
 
 ## Tasks
 
-{% if cookiecutter.manage_changelog_with_towncrier -%}
-- [ ] If this change affects user-facing code or public API, add news fragment file(s) to `changes/` (see [the changelog instructions]({{ cookiecutter.repository_url }}/blob/main/changes/README.md)).
-      Otherwise, add the `no-changelog-entry-needed` label.
-{%- endif %}
 - [ ] update or add relevant tests
 - [ ] update relevant docstrings and / or `docs/` page
+      {% if cookiecutter.manage_changelog_with_towncrier -%}
+- [ ] If this change affects user-facing code or public API, add news fragment file(s) to `changes/` (see [the changelog instructions]({{ cookiecutter.repository_url }}/blob/main/changes/README.md)).
+      Otherwise, add the `no-changelog-entry-needed` label.
+      {%- endif %}
+
+## Generative AI Disclosure
+
+Were any generative AI or agentic LLMs used in the process of making this change?
+
+- [ ] yes
+- [ ] no
