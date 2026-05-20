@@ -17,4 +17,3 @@ New contributions and contributors are very welcome!
 Please read `CONTRIBUTING.md <https://github.com/spacetelescope/{{ cookiecutter.package_name }}/blob/main/CONTRIBUTING.md>`_.
 
 We strive to provide a welcoming community by abiding with our `CODE_OF_CONDUCT.md <https://github.com/spacetelescope/{{ cookiecutter.package_name }}/blob/main/CODE_OF_CONDUCT.md>`_.
-

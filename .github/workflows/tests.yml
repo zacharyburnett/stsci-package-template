@@ -19,7 +19,7 @@ jobs:
     name: validate files for template combinations
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
           python-version: "3"
       - run: pip install cookiecutter pytest pytest-xdist
@@ -74,7 +74,7 @@ jobs:
             python_c_extensions: "y"
     name: lint ${{ matrix.directory }}${{ matrix.directory == 'python-package' && format(' ({0}{1}{2}{3})', matrix.python_build_backend, matrix.python_c_extensions == 'y' && ' with C extensions' || '', matrix.task_runner != 'none' && format(', {0}', matrix.task_runner) || '', matrix.crds_observatory != 'none' && format(', {0} CRDS', matrix.crds_observatory) || '') || '' }}
     steps:
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
           python-version: "3"
       - run: pip install cookiecutter prek
@@ -82,9 +82,13 @@ jobs:
         with:
           persist-credentials: false
       - name: render ${{ matrix.directory }} template with Cookiecutter
-        run: cookiecutter ${{ matrix.directory }} --no-input -o ../ project_name=test_${{ strategy.job-index }} ${{ matrix.directory == 'python-package' && format('publish_docs_to="readthedocs.io"  task_runner={0} python_build_backend={1} python_c_extensions={2} crds_observatory={3}', matrix.task_runner, matrix.python_build_backend, matrix.python_c_extensions, matrix.crds_observatory) || '' }}
+        env:
+          STRATEGY_JOB_INDEX: ${{ strategy.job-index }}
+        run: cookiecutter ${{ matrix.directory }} --no-input -o ../ project_name=test_${STRATEGY_JOB_INDEX} ${{ matrix.directory == 'python-package' && format('publish_docs_to="readthedocs.io"  task_runner={0} python_build_backend={1} python_c_extensions={2} crds_observatory={3}', matrix.task_runner, matrix.python_build_backend, matrix.python_c_extensions, matrix.crds_observatory) || '' }}
       - name: run linters and formatters
+        env:
+          STRATEGY_JOB_INDEX: ${{ strategy.job-index }}
         run: |
-          cd ../test_${{ strategy.job-index }}/
+          cd ../test_${STRATEGY_JOB_INDEX}/
           git init
           prek run --all-files --verbose --show-diff-on-failure
