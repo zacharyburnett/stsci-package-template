@@ -4,11 +4,17 @@
   "repository_url": "https://github.com/spacetelescope/{{ cookiecutter.package_name }}",
   "project_description": null,
   "manage_changelog_with_towncrier": false,
+  "publish_docs_to": ["none", "readthedocs.io", "github.io"],
   "__prompts__": {
     "project_name": "name of project",
     "package_name": "importable package name (without spaces or hyphens)",
     "repository_url": "URL of repository",
     "project_description": "short description of project",
-    "manage_changelog_with_towncrier": "use towncrier to manage changelog entries?"
+    "manage_changelog_with_towncrier": "use towncrier to manage changelog entries?",
+    "publish_docs_to": {
+      "__prompt__": "publish documentation?",
+      "none": "no",
+      "readthedocs.io": "yes, to ReadTheDocs"
+    }
   }
 }

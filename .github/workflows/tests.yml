@@ -97,6 +97,6 @@ jobs:
         working-directory: build/test_${{ strategy.job-index }}/
       - name: build documentation
         run: |
-          pip install sphinx
+          pip install ${{ matrix.directory == 'python-package' && '..[docs]' || '-r requirements.txt' }}
           make html
         working-directory: build/test_${{ strategy.job-index }}/docs/

@@ -14,7 +14,7 @@ To build the docs locally (assuming you have [set up your environment as describ
 
 ```shell
 cd docs/
-pip install ..[docs]
+pip install requirements.txt
 make clean
 make html
 ```

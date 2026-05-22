@@ -3,41 +3,22 @@
 # For the full list of built-in configuration values, see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
-import importlib
-import tomllib
 import datetime
-from pathlib import Path
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-with open(Path(__file__).parent.parent / "pyproject.toml", "rb") as metadata_file:
-    metadata = tomllib.load(metadata_file)["project"]
-
-project = metadata["name"]
+project = "{{ cookiecutter.project_name }}"
 author = "Space Telescope Science Institute"
 copyright = f"{datetime.datetime.today().year}, {author}"
 
-package = importlib.import_module(metadata["name"])
-try:
-    version = package.__version__.split("-", 1)[0]
-    # The full version, including alpha/beta/rc tags.
-    release = package.__version__
-except AttributeError:
-    version = "dev"
-    release = "dev"
+version = "dev"
+release = "dev"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = [
-    "autoapi.extension",
-    "numpydoc",
-    "pytest_doctestplus.sphinx.doctestplus",
-    "sphinx.ext.autodoc",
-    "sphinx.ext.intersphinx",
-    "sphinx.ext.viewcode",
-]
+extensions = ["sphinx.ext.intersphinx"]
 
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
@@ -45,7 +26,7 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 # reST default role used for single backticks (`text`)
 default_role = "obj"
 
-# -- HTML output configuration ----------------------------------------------
+# -- HTML output configuration -----------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 html_theme = "sphinx_rtd_theme"
@@ -83,21 +64,12 @@ linkcheck_allow_unauthorized = False
 # Enable nitpicky mode - which ensures that all references in the docs resolve.
 nitpicky = True
 
-# -- numpydoc configuration --------------------------------------------------
+# -- numpydoc configuration -------------------------------------------------
 
 # Don't show summaries of the members in each class along with the class' docstring
 numpydoc_show_class_members = False
 
-# -- sphinx-autoapi configuration --------------------------------------------
-# https://sphinx-autoapi.readthedocs.io/en/latest/reference/config.html
-
-autoapi_dirs = ["../src"]
-autoapi_root = "api"
-autoapi_generate_api_docs = False
-autoapi_member_order = "bysource"
-autoapi_python_class_content = "both"
-
-# -- sphinx.ext.intersphinx configuration ------------------------------------
+# -- sphinx.ext.intersphinx configuration -----------------------------------
 # https://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html#configuration
 
 intersphinx_mapping = {
