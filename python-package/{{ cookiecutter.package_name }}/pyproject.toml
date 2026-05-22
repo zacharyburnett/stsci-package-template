@@ -27,14 +27,21 @@ docs = ["numpydoc", "pytest_doctestplus", "sphinx", "sphinx-autoapi", "sphinx-rt
 test = ["pytest{%- if cookiecutter.python_version.split('=')[1].split('.')[1]|int >= 10 -%}>=9{%- endif -%}", "pytest_doctestplus"]
 
 [build-system]
-{%- if cookiecutter.python_build_backend == "hatchling" %}
 requires = [
+{%- if cookiecutter.python_build_backend == "hatchling" %}
   "hatch-vcs",
   "hatchling>=1.20",
+{%- elif cookiecutter.python_build_backend == "setuptools" %}
+  "setuptools>=61.2",
+  "setuptools_scm[toml]",
+{%- endif %}
+{%- if cookiecutter.python_c_extensions %}
+  "numpy",
+{%- endif %}
 ]
+{%- if cookiecutter.python_build_backend == "hatchling" %}
 build-backend = "hatchling.build"
 {%- elif cookiecutter.python_build_backend == "setuptools" %}
-requires = ["setuptools>=61.2", "setuptools_scm[toml]"]
 build-backend = "setuptools.build_meta"
 {%- endif %}
 
