@@ -82,13 +82,21 @@ jobs:
         with:
           persist-credentials: false
       - name: render ${{ matrix.directory }} template with Cookiecutter
-        env:
-          STRATEGY_JOB_INDEX: ${{ strategy.job-index }}
-        run: cookiecutter ${{ matrix.directory }} --no-input -o ../ project_name=test_${STRATEGY_JOB_INDEX} ${{ matrix.directory == 'python-package' && format('publish_docs_to="readthedocs.io"  task_runner={0} python_build_backend={1} python_c_extensions={2} crds_observatory={3}', matrix.task_runner, matrix.python_build_backend, matrix.python_c_extensions, matrix.crds_observatory) || '' }}
+        run: cookiecutter ${{ matrix.directory }} --no-input -o build project_name=test_${{ strategy.job-index }} ${{ matrix.directory == 'python-package' && format('publish_docs_to="readthedocs.io"  task_runner={0} python_build_backend={1} python_c_extensions={2} crds_observatory={3}', matrix.task_runner, matrix.python_build_backend, matrix.python_c_extensions, matrix.crds_observatory) || '' }}
       - name: run linters and formatters
-        env:
-          STRATEGY_JOB_INDEX: ${{ strategy.job-index }}
         run: |
-          cd ../test_${STRATEGY_JOB_INDEX}/
           git init
           prek run --all-files --verbose --show-diff-on-failure
+        working-directory: build/test_${{ strategy.job-index }}/
+      - if: ${{ matrix.directory == 'python-package' }}
+        name: build Python package
+        run: |
+          pip install .
+          pip install build
+          python -m build
+        working-directory: build/test_${{ strategy.job-index }}/
+      - name: build documentation
+        run: |
+          pip install sphinx
+          make html
+        working-directory: build/test_${{ strategy.job-index }}/docs/
