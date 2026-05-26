@@ -20,28 +20,16 @@ concurrency:
 
 jobs:
 {%- if cookiecutter.task_runner != 'tox' %}
-  versions:
+  supported-pythons:
     runs-on: ubuntu-latest
     steps:
-      - name: retrieve source code
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: supported-pythons
+        uses: zacharyburnett/supported-pythons@2.0.1
         with:
-          persist-credentials: false
-          path: ./{{ cookiecutter.package_name }}/
-      - name: retrieve tool script
-        uses: actions/checkout@v6
-        with:
-          repository: spacetelescope/stsci-package-template
-          persist-credentials: false
-          path: ./stsci_package_template/
-      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
-        with:
-          python-version: "3"
-      - name: derive supported versions of Python from source code
-        id: supported_pythons
-        run: echo versions=$(pipx run ./stsci_package_template/tools/supported_pythons.py --package-source=./{{ cookiecutter.package_name }}/) >> $GITHUB_OUTPUT
+          package: ${{ "{{" }} inputs.git_repository {{ "}}" }}
+          package-ref: ${{ "{{" }} inputs.git_ref {{ "}}" }}
     outputs:
-      supported_pythons: ${{ "{{" }} steps.supported_pythons.outputs.versions {{ "}}" }}
+      versions: ${{ "{{" }} steps.supported-pythons.outputs.versions {{ "}}" }}
 {%- endif %}
 {%- if cookiecutter.crds_observatory != 'none' %}
   latest_crds_context:
@@ -53,7 +41,7 @@ jobs:
 {%- if cookiecutter.task_runner != 'tox' or cookiecutter.crds_observatory != 'none' %}
     needs:
 {%- if cookiecutter.task_runner != 'tox' %}
-      - versions
+      - supported-pythons
 {%- endif %}
 {%- if cookiecutter.crds_observatory != 'none' %}
       - latest_crds_context
@@ -65,7 +53,7 @@ jobs:
       matrix:
         runs-on: ["ubuntu-latest"]
 {%- if cookiecutter.task_runner == 'none' %}
-        python-version: ${{ "{{" }} fromJSON(needs.versions.outputs.supported_pythons) {{ "}}" }}
+        python-version: ${{ "{{" }} fromJSON(needs.supported-pythons.outputs.versions) {{ "}}" }}
 {%- endif %}
         coverage: [false]
         include:
@@ -78,7 +66,7 @@ jobs:
 {%- if cookiecutter.task_runner == 'none' %}
             python-version: "3"
 {%- endif %}
-    name: run tests (Python ${{ "{{" }} {%- if cookiecutter.task_runner == 'nox' -%}needs.versions.outputs.supported_pythons{%- else -%}matrix.python-version{%- endif -%} {{ "}}" }}, ${{ "{{" }} matrix.runs-on {{ "}}" }})
+    name: run tests (Python ${{ "{{" }} {%- if cookiecutter.task_runner == 'nox' -%}needs.supported-pythons.outputs.versions{%- else -%}matrix.python-version{%- endif -%} {{ "}}" }}, ${{ "{{" }} matrix.runs-on {{ "}}" }})
     runs-on: ${{ "{{" }} matrix.runs-on {{ "}}" }}
 {%- if cookiecutter.crds_observatory != 'none' %}
     env:
@@ -108,7 +96,7 @@ jobs:
 {%- elif cookiecutter.task_runner == 'nox' %}
       - uses: wntrblm/nox@5a277b752f6094150e25237d47c34168e2b7526e # 2026.02.09
         with:
-            python-versions: ${{ "{{" }} runner.os != 'macOS' && needs.versions.outputs.supported_pythons || '3' {{ "}}" }}
+            python-versions: ${{ "{{" }} runner.os != 'macOS' && needs.supported-pythons.outputs.versions || '3' {{ "}}" }}
             session: test${{ "{{" }} matrix.coverage && '_with_coverage' || '' {{ "}}" }}
 {%- endif %}
       - if: matrix.coverage
