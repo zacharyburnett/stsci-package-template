@@ -17,11 +17,10 @@ jobs:
 {%- else %}
     strategy:
       matrix:
-        target:
-          - cp3*-manylinux_x86_64
-          - cp3*-macosx_x86_64
-          - cp3*-macosx_arm64
-    runs-on: ${{ "{{" }} contains(matrix.target, 'macos') && 'macos-latest' || contains(matrix.target, 'win') && 'windows-latest' || 'ubuntu-latest' {{ "}}" }}
+        runs-on:
+          - ubuntu-latest
+          - macos-latest
+    runs-on: ${{ "{{" }} matrix.runs-on {{ "}}" }}
 {%- endif %}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -41,9 +40,6 @@ jobs:
         with:
           package-dir: ./
           output-dir: dist/
-        env:
-          CIBW_BUILD: ${{ "{{" }} matrix.target {{ "}}" }}
-          CIBW_ARCHS: ${{ "{{" }} runner.os == 'macOS' && 'arm64 x86_64' || 'auto' {{ "}}" }}
 {%- endif %}
       - run: pip install build
       - run: python -m build --sdist{%- if not cookiecutter.python_c_extensions %} --wheel{%- endif %}
