@@ -1,49 +1,39 @@
 """
- execute this file by running nox --noxfile <noxfile.py>
+nox session configuration
+https://nox.thea.codes/en/stable/config.html
 
- Nox stores virtualenvs in .nox/, but that can be overridden with
- nox --envdir /tmp/envs
- 
- micromamba is set as the default backend, you can activate any env that was created
- by using the full path to the environment
+  nox --list-sessions
+  nox -s format
+  nox -s test
+  nox -s build
 
- each session is configured like an app.route, and a new virtualenv is created for each
- and contains an environment and a set of commands
+You can activate any previously-created session environment with its full path.
 
- use default=False in the session decorator to not run that session by default
- 
- >nox --list-sessions
- >nox -s test
- >nox --session simple-nox-test
- >nox --envdir /tmp/envs <-- to save environments to a place other that .nox/
+to save environments to a place other than `.nox/`:
 
- there are some situations where it is advantageous to reuse the 
- virtualenvs between runs. Use -r or --reuse-existing-virtualenvs 
- or for fine-grained control use --reuse-venv=yes|no|always|never
+  nox --envdir /tmp/envs <-- 
 
- --no-venv Runs the selected sessions directly on the current interpreter, without creating a venv. 
- This is an alias for '--force-venv-backend none'.
- 
- --extra-pythons 3.11 3.12 3.13   <- to run multiple pythons from the command line for a session
+To run selected sessions directly on the current interpreter (without creating an environment):
 
-NOTE: If you have just created a new package template, 
-make sure that you have initialized this package with git before running tests: git init
+    nox -s test --no-venv
 
+To run multiple pythons from the command line for a session:
+
+    nox -s test --extra-pythons 3.11 3.12 3.13
 """
+
 import nox
 
-#make Nox fail the session if it uses any external program
-#without explicitly passing external=True into session.run:
+# fail if using an external program without external=True
 nox.options.error_on_external_run = True
 
 
-# a list of python versions will create an env for each
-# and run all the tests
-@nox.session(name="format",
-             tags=["all"],
-             python=["3.12", "3.13"],
-             venv_backend='micromamba|mamba',
-             default=False)
+@nox.session(
+    tags=["all"],
+    python=["3.12", "3.13"],
+    venv_backend="micromamba|mamba",
+    default=False,
+)
 def format(session):
     session.install("-e", ".[contrib]")
     session.run("ruff", "format", ".")
@@ -53,21 +43,24 @@ def format(session):
     session.run("ty", "check", ".", "--output-format=concise")
 
 
-@nox.session(name="test",
-             tags=["all", "test"],
-             python=["3.12","3.13"],
-             venv_backend='micromamba|mamba',
-             default=True)
+@nox.session(
+    tags=["all", "test"],
+    python=["3.12", "3.13"],
+    venv_backend="micromamba|mamba",
+    default=True,
+)
 def test(session):
     session.install("-e", ".[test]")
 
 
-@nox.session(name="test-with-coverage",
-             tags=["all", "coverage"],
-             python=["3.12","3.13"],
-             venv_backend='micromamba|mamba',
-             default=False)
-def test_coverage(session):
+@nox.session(
+    name="test-with-coverage",
+    tags=["all", "coverage"],
+    python=["3.12", "3.13"],
+    venv_backend="micromamba|mamba",
+    default=False,
+)
+def test_with_coverage(session):
     session.install("-e", ".[test]")
     session.run("coverage", "run", "-m", "pytest")
     session.run("coverage", "combine")
@@ -75,11 +68,12 @@ def test_coverage(session):
     session.run("coverage", "html")
 
 
-@nox.session(name="build",
-             tags=["all", "build"],
-             python=["3.12","3.13"],
-             venv_backend='micromamba|mamba',
-             default=False)
+@nox.session(
+    tags=["all", "build"],
+    python=["3.12", "3.13"],
+    venv_backend="micromamba|mamba",
+    default=False,
+)
 def build(session):
     session.run("rm", "-rf", "build")
     session.run("rm", "-rf", "dist")
