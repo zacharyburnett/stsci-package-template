@@ -18,6 +18,15 @@ concurrency:
   group: ${{ "{{" }} github.workflow {{ "}}" }}-${{ "{{" }} github.event.pull_request.number || github.ref {{ "}}" }}
   cancel-in-progress: true
 
+{%- if cookiecutter.crds_observatory != 'none' %}
+env:
+  CRDS_PATH: /tmp/data/crds_cache
+  CRDS_OBSERVATORY: {{ cookiecutter.crds_observatory }}
+  CRDS_SERVER_URL: https://{{ cookiecutter.crds_observatory }}-crds.stsci.edu
+  CRDS_CLIENT_RETRY_COUNT: 3
+  CRDS_CLIENT_RETRY_DELAY_SECONDS: 20
+{%- endif %}
+
 jobs:
 {%- if cookiecutter.task_runner != 'tox' %}
   supported-pythons:
@@ -32,10 +41,17 @@ jobs:
       versions: ${{ "{{" }} steps.supported-pythons.outputs.versions {{ "}}" }}
 {%- endif %}
 {%- if cookiecutter.crds_observatory != 'none' %}
-  latest_crds_context:
-    uses: spacetelescope/crds/.github/workflows/contexts.yml@main
-    with:
-      observatory: {{ cookiecutter.crds_observatory }}
+  crds:
+    runs-on: ubuntu-latest
+    steps:
+      - id: latest-context
+        run: >
+          echo latest-context=$(
+            curl -s -X POST -d '{"jsonrpc": "1.0", "method": "get_default_context", "params": ["${{ "{{" }} env.CRDS_OBSERVATORY {{ "}}" }}", "latest"], "id": 1}' ${{ "{{" }} env.CRDS_SERVER_URL {{ "}}" }}/json/ --retry 8 --connect-timeout 10 |
+            python -c "import sys, json; print(json.load(sys.stdin)['result'])"
+          ) >> $GITHUB_OUTPUT
+    outputs:
+      latest-context: ${{ "{{" }} steps.latest-context.outputs.latest-context {{ "}}" }}
 {%- endif %}
   test:
 {%- if cookiecutter.task_runner != 'tox' or cookiecutter.crds_observatory != 'none' %}
@@ -44,7 +60,7 @@ jobs:
       - supported-pythons
 {%- endif %}
 {%- if cookiecutter.crds_observatory != 'none' %}
-      - latest_crds_context
+      - crds
 {%- endif %}
 {%- endif %}
 {%- if cookiecutter.task_runner != 'tox' %}
@@ -70,11 +86,7 @@ jobs:
     runs-on: ${{ "{{" }} matrix.runs-on {{ "}}" }}
 {%- if cookiecutter.crds_observatory != 'none' %}
     env:
-      CRDS_PATH: /tmp/data/crds_cache
-      CRDS_SERVER_URL: https://{{ cookiecutter.crds_observatory }}-crds.stsci.edu
-      CRDS_CONTEXT: ${{ "{{" }} needs.latest_crds_context.outputs.{{ cookiecutter.crds_observatory }} {{ "}}" }}
-      CRDS_CLIENT_RETRY_COUNT: 3
-      CRDS_CLIENT_RETRY_DELAY_SECONDS: 20
+      CRDS_CONTEXT: ${{ "{{" }} needs.crds.outputs.latest-context {{ "}}" }}
 {%- endif %}
     steps:
 {%- if cookiecutter.crds_observatory != 'none' %}
@@ -110,13 +122,13 @@ jobs:
     with:
 {%- if cookiecutter.crds_observatory != 'none' %}
       setenv: |
-        CRDS_PATH: /tmp/data/crds_cache
-        CRDS_SERVER_URL: ${{ "{{" }} 'https://{{ cookiecutter.crds_observatory }}-crds.stsci.edu' {{ "}}" }}
-        CRDS_CONTEXT: ${{ "{{" }} needs.latest_crds_context.outputs.context {{ "}}" }}
-        CRDS_CLIENT_RETRY_COUNT: 3
-        CRDS_CLIENT_RETRY_DELAY_SECONDS: 20
-      cache-path: /tmp/data/crds_cache
-      cache-key: crds-${{ "{{" }} needs.latest_crds_context.outputs.context {{ "}}" }}
+        CRDS_PATH: ${{ "{{" }} env.CRDS_PATH {{ "}}" }}
+        CRDS_SERVER_URL: ${{ "{{" }} env.CRDS_SERVER_URL {{ "}}" }}
+        CRDS_CONTEXT: ${{ "{{" }} needs.crds.outputs.latest-context {{ "}}" }}
+        CRDS_CLIENT_RETRY_COUNT: ${{ "{{" }} env.CRDS_CLIENT_RETRY_COUNT {{ "}}" }}
+        CRDS_CLIENT_RETRY_DELAY_SECONDS: ${{ "{{" }} env.CRDS_CLIENT_RETRY_DELAY_SECONDS {{ "}}" }}
+      cache-path: ${{ "{{" }} env.CRDS_PATH {{ "}}" }}
+      cache-key: crds-${{ "{{" }} needs.crds.outputs.latest-context {{ "}}" }}
 {%- endif %}
       envs: |
         - linux: py3-cov
