@@ -11,7 +11,7 @@ classifiers = [
   "Programming Language :: Python :: 3",
   "Topic :: Scientific/Engineering :: Astronomy",
 ]
-dependencies = []
+dependencies = ["cruft"]
 dynamic = ["version"]
 
 [project.urls]
@@ -24,7 +24,8 @@ repository = "{{ cookiecutter.repository_url }}"
 
 [project.optional-dependencies]
 docs = ["numpydoc", "pytest_doctestplus", "sphinx", "sphinx-autoapi", "sphinx-rtd-theme"]
-test = ["pytest{%- if cookiecutter.python_version.split('=')[1].split('.')[1]|int >= 10 -%}>=9{%- endif -%}", "pytest_doctestplus"]
+test = ["pytest{%- if cookiecutter.python_version.split('=')[1].split('.')[1]|int >= 10 -%}>=9{%- endif -%}", "pytest_doctestplus", "coverage"]
+contrib = ["ruff", "ty"]
 
 [build-system]
 requires = [
@@ -113,4 +114,6 @@ select = [
 
 {% if cookiecutter.python_build_backend == "setuptools" -%}
 [tool.setuptools_scm]
+write_to = "src/{{cookiecutter.package_name}}/_version.py"  # Automatically creates this file
+version_scheme = "post-release"     
 {%- endif %}
