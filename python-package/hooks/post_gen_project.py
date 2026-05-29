@@ -10,7 +10,8 @@ REMOVE_PATHS = [
     '{% if cookiecutter.task_runner != "tox" %}tox.toml{% endif %}',
     '{% if cookiecutter.task_runner != "nox" %}noxfile.py{% endif %}',
     "{% if not cookiecutter.python_c_extensions %}setup.py{% endif %}",
-]
+    '{% if cookiecutter.publish_docs_to != "github.io" %}.github/workflows/sphinx-deploy.yml{% endif %}',
+    ]
 
 for path in REMOVE_PATHS:
     path = path.strip()

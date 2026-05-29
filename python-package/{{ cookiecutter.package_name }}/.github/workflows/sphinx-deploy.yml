@@ -31,7 +31,7 @@ jobs:
         with:
           path: docs/_build/html/
           retention-days: 1 # the site remains live, but artifact deleted after 1 day
-
+  {% raw %}
   deploy:
     name: Deploy
     needs: build
@@ -40,8 +40,10 @@ jobs:
       pages: write
       id-token: write
     environment:
-      name: github-pages
+      name: github-pages      
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
         id: deployment
+  {% endraw %}
+
