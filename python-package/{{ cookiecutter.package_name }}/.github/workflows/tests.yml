@@ -33,10 +33,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - id: supported-pythons
-        uses: zacharyburnett/supported-pythons@2.0.1
+        uses: zacharyburnett/supported-pythons@9186be100e84431de457f333fe8f793f079f5b66 # 2.0.3
         with:
-          package: ${{ "{{" }} inputs.git_repository {{ "}}" }}
-          package-ref: ${{ "{{" }} inputs.git_ref {{ "}}" }}
+          package: ${{ "{{" }} github.repository {{ "}}" }}
+          package-ref: ${{ "{{" }} github.ref || github.sha {{ "}}" }}
     outputs:
       versions: ${{ "{{" }} steps.supported-pythons.outputs.versions {{ "}}" }}
 {%- endif %}
