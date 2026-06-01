@@ -33,7 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - id: supported-pythons
-        uses: zacharyburnett/supported-pythons@9186be100e84431de457f333fe8f793f079f5b66 # 2.0.3
+        uses: zacharyburnett/supported-pythons@83fea1cbcd1df5494f6846152992a553def0325b # 2.0.4
         with:
           package: ${{ "{{" }} github.repository {{ "}}" }}
           package-ref: ${{ "{{" }} github.ref || github.sha {{ "}}" }}
@@ -73,16 +73,18 @@ jobs:
 {%- endif %}
         coverage: [false]
         include:
-          - runs-on: "ubuntu-latest"
+          - name: run tests with coverage (latest Python, ubuntu-latest)
+            runs-on: "ubuntu-latest"
 {%- if cookiecutter.task_runner == 'none' %}
-            python-version: "3"
+            python-version: "${{ "{{" }} needs.supported-pythons.outputs.latest {{ "}}" }}"
 {%- endif %}
             coverage: true
-          - runs-on: "macos-latest"
+          - name: run tests (latest Python, macos-latest)
+            runs-on: "macos-latest"
 {%- if cookiecutter.task_runner == 'none' %}
-            python-version: "3"
+            python-version: "${{ "{{" }} needs.supported-pythons.outputs.latest {{ "}}" }}"
 {%- endif %}
-    name: run tests (Python ${{ "{{" }} {%- if cookiecutter.task_runner == 'nox' -%}needs.supported-pythons.outputs.versions{%- else -%}matrix.python-version{%- endif -%} {{ "}}" }}, ${{ "{{" }} matrix.runs-on {{ "}}" }})
+    name: ${{ "{{" }} matrix.name || format('run tests (Python {0}, {1})', {%- if cookiecutter.task_runner == 'nox' -%}needs.supported-pythons.outputs.versions{%- else -%}matrix.python-version{%- endif -%}, matrix.runs-on) {{ "}}" }}
     runs-on: ${{ "{{" }} matrix.runs-on {{ "}}" }}
 {%- if cookiecutter.crds_observatory != 'none' %}
     env:
