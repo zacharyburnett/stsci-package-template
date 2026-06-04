@@ -1,26 +1,24 @@
-"""
-nox session configuration
-https://nox.thea.codes/en/stable/config.html
-
-  nox --list-sessions
-  nox -s format
-  nox -s test
-  nox -s build
-
-You can activate any previously-created session environment with its full path.
-
-to save environments to a place other than `.nox/`:
-
-  nox --envdir /tmp/envs <-- 
-
-To run selected sessions directly on the current interpreter (without creating an environment):
-
-    nox -s test --no-venv
-
-To run multiple pythons from the command line for a session:
-
-    nox -s test --extra-pythons 3.11 3.12 3.13
-"""
+# nox session configuration
+# https://nox.thea.codes/en/stable/config.html
+#
+#   nox --list-sessions
+#   nox -s format
+#   nox -s test
+#   nox -s build
+#
+# You can activate any previously-created session environment with its full path.
+#
+# to save environments to a place other than `.nox/`:
+#
+#   nox --envdir /tmp/envs
+#
+# To run selected sessions directly on the current interpreter (without creating an environment):
+#
+#     nox -s test --no-venv
+#
+# To run multiple pythons from the command line for a session:
+#
+#     nox -s test --extra-pythons 3.11 3.12 3.13
 
 import nox
 

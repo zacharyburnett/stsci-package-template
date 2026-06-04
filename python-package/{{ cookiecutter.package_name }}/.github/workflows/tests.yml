@@ -54,7 +54,7 @@ jobs:
           versions = [str(version) for version in sorted([Version(version) for version in os.environ["PYTHON_VERSIONS"].split() if version in version_requirements])]
 
           with open(os.environ["GITHUB_OUTPUT"], "a") as github_output:
-              print(f"all={', '.join(versions)}", file=github_output)
+              print(f"all={' '.join(versions)}", file=github_output)
               print(f"json={json.dumps(versions)}", file=github_output)
               print(f"oldest={versions[0]}", file=github_output)
               print(f"latest={versions[-1]}", file=github_output)

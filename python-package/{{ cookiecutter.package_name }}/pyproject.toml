@@ -15,36 +15,35 @@ dependencies = ["cruft"]
 dynamic = ["version"]
 
 [project.urls]
-{%- if cookiecutter.publish_docs_to == 'readthedocs.io' %}
-documentation = "https://{{ cookiecutter.package_name }}.readthedocs.io"
-{%- elif cookiecutter.publish_docs_to == 'github.io' %}
-documentation = "https://spacetelescope.github.io/{{ cookiecutter.package_name }}"
-{%- endif %}
+documentation = "{% if cookiecutter.publish_docs_to == 'readthedocs.io' %}https://{{ cookiecutter.package_name }}.readthedocs.io{% elif cookiecutter.publish_docs_to == 'github.io' %}https://spacetelescope.github.io/{{ cookiecutter.package_name }}{% endif %}"
 repository = "{{ cookiecutter.repository_url }}"
 
 [project.optional-dependencies]
-docs = ["numpydoc", "pytest_doctestplus", "sphinx", "sphinx-autoapi", "sphinx-rtd-theme"]
-test = ["pytest{%- if cookiecutter.python_version.split('=')[1].split('.')[1]|int >= 10 -%}>=9{%- endif -%}", "pytest_doctestplus", "coverage"]
-contrib = ["ruff", "ty"]
+contrib = [{% if cookiecutter.task_runner == 'nox' %}"nox", {% endif %}"ruff"{% if cookiecutter.task_runner == 'tox' %}, "tox"{% endif -%}]
+docs = [
+  "numpydoc",
+  "pytest_doctestplus",
+  "sphinx",
+  "sphinx-autoapi",
+  "sphinx-rtd-theme"
+]
+test = ["pytest{% if cookiecutter.python_version.split('=')[1].split('.')[1]|int >= 10 %}>=9{% endif %}", "pytest_doctestplus", "coverage"]
 
 [build-system]
 requires = [
 {%- if cookiecutter.python_build_backend == "hatchling" %}
   "hatch-vcs",
   "hatchling>=1.20",
-{%- elif cookiecutter.python_build_backend == "setuptools" %}
-  "setuptools>=61.2",
-  "setuptools_scm[toml]",
 {%- endif %}
 {%- if cookiecutter.python_c_extensions %}
   "numpy",
 {%- endif %}
-]
-{%- if cookiecutter.python_build_backend == "hatchling" %}
-build-backend = "hatchling.build"
-{%- elif cookiecutter.python_build_backend == "setuptools" %}
-build-backend = "setuptools.build_meta"
+{%- if cookiecutter.python_build_backend == "setuptools" %}
+  "setuptools>=61.2",
+  "setuptools_scm[toml]",
 {%- endif %}
+]
+build-backend = "{% if cookiecutter.python_build_backend == "hatchling" %}hatchling.build{% elif cookiecutter.python_build_backend == "setuptools" %}setuptools.build_meta{% endif %}"
 
 [tool.cibuildwheel]
 build = "py3*"
@@ -74,15 +73,13 @@ exclude_also = [
 
 [tool.cruft]
 skip = ["**/__init__.py", "tests/*"]
-
-{%- if cookiecutter.python_build_backend == "hatchling" %}
+{% if cookiecutter.python_build_backend == "hatchling" %}
 [tool.hatch.version]
 source = "vcs"
 
 [tool.hatch.version.raw-options]
 version_scheme = "release-branch-semver"
-{%- endif %}
-
+{% endif %}
 [tool.numpydoc_validation]
 checks = [
   "all",
@@ -96,7 +93,7 @@ checks = [
   "RT05",  # Return value description should finish with a period
 ]
 
-[tool.pytest{%- if cookiecutter.python_version.split('=')[1].split('.')[1]|int < 10 -%}.ini_options{%- endif -%}]
+[tool.pytest{% if cookiecutter.python_version.split('=')[1].split('.')[1]|int < 10 %}.ini_options{% endif %}]
 minversion = "9"
 
 [tool.ruff]
@@ -111,9 +108,8 @@ select = [
   "B",  # flake8-bugbear
   "UP",  # pyupgrade
 ]
-
-{% if cookiecutter.python_build_backend == "setuptools" -%}
+{% if cookiecutter.python_build_backend == "setuptools" %}
 [tool.setuptools_scm]
 write_to = "src/{{cookiecutter.package_name}}/_version.py"  # Automatically creates this file
 version_scheme = "post-release"     
-{%- endif %}
+{% endif -%}
