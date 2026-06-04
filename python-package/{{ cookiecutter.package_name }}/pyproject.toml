@@ -110,6 +110,5 @@ select = [
 ]
 {% if cookiecutter.python_build_backend == "setuptools" %}
 [tool.setuptools_scm]
-write_to = "src/{{cookiecutter.package_name}}/_version.py"  # Automatically creates this file
-version_scheme = "post-release"     
+version_scheme = "semver-pep440-release-branch"
 {% endif -%}
