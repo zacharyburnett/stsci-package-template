@@ -1,9 +1,11 @@
 requires = ["tox>=4.50"]
-env_list = { product = [
-  { prefix = "py3", start = 11, stop = 14 },
-  ["cov"],
-  ["xdist"],
-] }
+env_list = [
+  { product = [
+    { prefix = "py3", start = 11, stop = 14 },
+    ["cov"],
+    ["xdist"],
+  ] }
+]
 
 [env_run_base]
 factors = [["cov"], ["xdist"]]
