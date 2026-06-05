@@ -1,7 +1,7 @@
 name: label
 
 on:
-  pull_request_target:
+  pull_request:
 
 concurrency:
   group: ${{ "{{" }} github.workflow {{ "}}" }}-${{ "{{" }} github.event.pull_request.number || github.ref {{ "}}" }}
@@ -14,7 +14,7 @@ jobs:
   label:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/labeler@v6
-        if: github.event_name == 'pull_request_target' || github.event_name == 'pull_request'
+      - uses: actions/labeler@f27b608878404679385c85cfa523b85ccb86e213 # v6.1.0
+        if: github.event_name == 'pull_request'
         with:
           repo-token: "${{ "{{" }} secrets.GITHUB_TOKEN {{ "}}" }}"

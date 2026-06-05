@@ -12,11 +12,11 @@ on:
       - main
   workflow_dispatch:
 
-permissions: {}
-
 concurrency:
   group: ${{ "{{" }} github.workflow {{ "}}" }}-${{ "{{" }} github.event.pull_request.number || github.ref {{ "}}" }}
   cancel-in-progress: true
+
+permissions: {}
 
 env:
   PYTHON_VERSIONS: 3.9 3.10 3.11 3.12 3.13 3.14
@@ -74,17 +74,17 @@ jobs:
             python -c "import sys, json; print(json.load(sys.stdin)['result'])"
           ) >> $GITHUB_OUTPUT
     outputs:
-      latest-context: ${{ "{{" }} steps.latest-context.outputs.latest-context {{ "}}" }}
+      path: ${{ "{{" }} env.CRDS_PATH {{ "}}" }}
+      server-url: ${{ "{{" }} env.CRDS_SERVER_URL {{ "}}" }}
+      context: ${{ "{{" }} steps.latest-context.outputs.latest-context {{ "}}" }}
+      client-retry-count: ${{ "{{" }} env.CRDS_CLIENT_RETRY_COUNT {{ "}}" }}
+      client-retry-delay-seconds: ${{ "{{" }} env.CRDS_CLIENT_RETRY_DELAY_SECONDS {{ "}}" }}
 {%- endif %}
   test:
-{%- if cookiecutter.task_runner != 'tox' or cookiecutter.crds_observatory != 'none' %}
     needs:
-{%- if cookiecutter.task_runner != 'tox' %}
       - supported-pythons
-{%- endif %}
 {%- if cookiecutter.crds_observatory != 'none' %}
       - crds
-{%- endif %}
 {%- endif %}
 {%- if cookiecutter.task_runner != 'tox' %}
     strategy:
@@ -108,7 +108,7 @@ jobs:
     runs-on: ${{ "{{" }} matrix.runs-on {{ "}}" }}
 {%- if cookiecutter.crds_observatory != 'none' %}
     env:
-      CRDS_CONTEXT: ${{ "{{" }} needs.crds.outputs.latest-context {{ "}}" }}
+      CRDS_CONTEXT: ${{ "{{" }} needs.crds.outputs.context {{ "}}" }}
 {%- endif %}
     steps:
 {%- if cookiecutter.crds_observatory != 'none' %}
@@ -144,26 +144,26 @@ jobs:
     with:
 {%- if cookiecutter.crds_observatory != 'none' %}
       setenv: |
-        CRDS_PATH: ${{ "{{" }} env.CRDS_PATH {{ "}}" }}
-        CRDS_SERVER_URL: ${{ "{{" }} env.CRDS_SERVER_URL {{ "}}" }}
-        CRDS_CONTEXT: ${{ "{{" }} needs.crds.outputs.latest-context {{ "}}" }}
-        CRDS_CLIENT_RETRY_COUNT: ${{ "{{" }} env.CRDS_CLIENT_RETRY_COUNT {{ "}}" }}
-        CRDS_CLIENT_RETRY_DELAY_SECONDS: ${{ "{{" }} env.CRDS_CLIENT_RETRY_DELAY_SECONDS {{ "}}" }}
-      cache-path: ${{ "{{" }} env.CRDS_PATH {{ "}}" }}
-      cache-key: crds-${{ "{{" }} needs.crds.outputs.latest-context {{ "}}" }}
+        CRDS_PATH: ${{ "{{" }} needs.crds.outputs.path {{ "}}" }}
+        CRDS_SERVER_URL: ${{ "{{" }} needs.crds.outputs.server-url {{ "}}" }}
+        CRDS_CONTEXT: ${{ "{{" }} needs.crds.outputs.context {{ "}}" }}
+        CRDS_CLIENT_RETRY_COUNT: ${{ "{{" }} needs.crds.outputs.client-retry-count {{ "}}" }}
+        CRDS_CLIENT_RETRY_DELAY_SECONDS: ${{ "{{" }} needs.crds.outputs.client-retry-delay-seconds{{ "}}" }}
+      cache-path: ${{ "{{" }} needs.crds.outputs.path {{ "}}" }}
+      cache-key: crds-${{ "{{" }} needs.crds.outputs.context {{ "}}" }}
 {%- endif %}
       envs: |
         - name: run tests (oldest supported Python, ubuntu-latest)
           linux: py3
-          python-version: ${{ "{{" }} steps.supported-pythons.outputs.oldest {{ "}}" }}
+          python-version: ${{ "{{" }} needs.supported-pythons.outputs.oldest {{ "}}" }}
         - name: run tests with coverage (latest supported Python, ubuntu-latest)
           linux: py3-cov
-          python-version: ${{ "{{" }} steps.supported-pythons.outputs.latest {{ "}}" }}
+          python-version: ${{ "{{" }} needs.supported-pythons.outputs.latest {{ "}}" }}
           pytest-results-summary: true
           coverage: github
         - name: run tests (latest supported Python, macos-latest)
           macos: py3
-          python-version: ${{ "{{" }} steps.supported-pythons.outputs.latest {{ "}}" }}
+          python-version: ${{ "{{" }} needs.supported-pythons.outputs.latest {{ "}}" }}
       fill: true
       fill_platforms: linux
       artifact-path: |
