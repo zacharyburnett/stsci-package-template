@@ -16,10 +16,10 @@ This change ...
 
 - [ ] update or add relevant tests
 - [ ] update relevant docstrings and / or `docs/` page
-      {% if cookiecutter.manage_changelog_with_towncrier -%}
+{%- if cookiecutter.manage_changelog_with_towncrier %}
 - [ ] If this change affects user-facing code or public API, add news fragment file(s) to `changes/` (see [the changelog instructions]({{ cookiecutter.repository_url }}/blob/main/changes/README.md)).
       Otherwise, add the `no-changelog-entry-needed` label.
-      {%- endif %}
+{%- endif %}
 
 ## Generative AI Disclosure
 

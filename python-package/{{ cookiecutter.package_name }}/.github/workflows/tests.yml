@@ -157,16 +157,16 @@ jobs:
       envs: |
         - name: run tests (oldest supported Python, ubuntu-latest)
           linux: py3
-          python-version: ${{ "{{" }} steps.supported-pythons.outputs.oldest {{ "}}" }} 
+          python-version: ${{ "{{" }} steps.supported-pythons.outputs.oldest {{ "}}" }}
         - linux: py3*
         - name: run tests with coverage (latest supported Python, ubuntu-latest)
           linux: py3-cov
-          python-version: ${{ "{{" }} steps.supported-pythons.outputs.latest {{ "}}" }} 
+          python-version: ${{ "{{" }} steps.supported-pythons.outputs.latest {{ "}}" }}
           pytest-results-summary: true
           coverage: github
         - name: run tests (latest supported Python, macos-latest)
           macos: py3
-          python-version: ${{ "{{" }} steps.supported-pythons.outputs.latest {{ "}}" }} 
+          python-version: ${{ "{{" }} steps.supported-pythons.outputs.latest {{ "}}" }}
       artifact-path: |
         results.xml
 {%- endif %}

@@ -2,17 +2,17 @@
 breaking-change:
   - changed-files:
       - any-glob-to-any-file:
-        - "changes/*.breaking.rst"
+          - "changes/*.breaking.rst"
 
 feature:
   - changed-files:
       - any-glob-to-any-file:
-        - "changes/*.feature.rst"
+          - "changes/*.feature.rst"
 
 fix:
   - changed-files:
       - any-glob-to-any-file:
-        - "changes/*.fix.rst"
+          - "changes/*.fix.rst"
 {% endif %}
 documentation:
   - changed-files:
@@ -41,12 +41,12 @@ packaging:
 automation:
   - changed-files:
       - any-glob-to-any-file:
-        - ".github/**"
+          - ".github/**"
 
 testing:
   - changed-files:
       - any-glob-to-any-file:
-        - "**/tests/**"
-        - "**/regtest/**"
-        - ".github/workflows/test*.yml"
-        - "**/conftest.py"
+          - "**/tests/**"
+          - "**/regtest/**"
+          - ".github/workflows/test*.yml"
+          - "**/conftest.py"
