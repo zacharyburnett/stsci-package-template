@@ -1,1 +1,1 @@
-../../../templates/docs/Makefile
+../../../docs/Makefile
