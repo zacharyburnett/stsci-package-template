@@ -57,12 +57,10 @@ jobs:
 
           with open(os.environ["GITHUB_OUTPUT"], "a") as github_output:
               print(f"json={json.dumps(versions)}", file=github_output)
-              print(f"all={' '.join(versions)}", file=github_output)
               print(f"oldest={versions[0]}", file=github_output)
               print(f"latest={versions[-1]}", file=github_output)
     outputs:
       python-version-json: ${{ "{{" }} steps.versions.outputs.json {{ "}}" }}
-      all: ${{ "{{" }} steps.versions.outputs.all {{ "}}" }}
       oldest: ${{ "{{" }} steps.versions.outputs.oldest {{ "}}" }}
       latest: ${{ "{{" }} steps.versions.outputs.latest {{ "}}" }} 
 {%- if cookiecutter.crds_observatory != 'none' %}
@@ -106,7 +104,7 @@ jobs:
           - name: run tests (latest supported Python, macos-latest)
             runs-on: "macos-latest"
             python-version: "${{ "{{" }} needs.supported-pythons.outputs.latest {{ "}}" }}"
-    name: ${{ "{{" }} matrix.name || format('run tests (Python {0}, {1})', {%- if cookiecutter.task_runner == 'nox' -%}needs.supported-pythons.outputs.all{%- else -%}matrix.python-version{%- endif -%}, matrix.runs-on) {{ "}}" }}
+    name: ${{ "{{" }} matrix.name || format('run tests (Python {0}, {1})', matrix.python-version, matrix.runs-on) {{ "}}" }}
     runs-on: ${{ "{{" }} matrix.runs-on {{ "}}" }}
 {%- if cookiecutter.crds_observatory != 'none' %}
     env:
