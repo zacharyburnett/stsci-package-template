@@ -22,7 +22,7 @@ To suggest a specific code change, or to contribute new code:
 2. Clone your fork to your local machine:
 
    ```shell
-   git clone https://github.com/YOUR_USERNAME/{{ cookiecutter.package_name }}
+   git clone https://github.com/<YOUR_GITHUB_USERNAME>/{{ cookiecutter.package_name }}
    cd {{ cookiecutter.package_name }}/
    ```
 
