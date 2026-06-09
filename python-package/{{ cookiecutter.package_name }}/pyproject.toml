@@ -92,22 +92,12 @@ checks = [
   "RT02",  # First line of return should contain only the type
   "RT05",  # Return value description should finish with a period
 ]
-
-[tool.pytest{% if cookiecutter.python_version.split('=')[1].split('.')[1]|int < 10 %}.ini_options{% endif %}]
+{% if cookiecutter.python_version.split('=')[1].split('.')[1]|int >= 10 %}
+[tool.pytest]
 minversion = "9"
-
-[tool.ruff]
-line-length = 120
-
-[tool.ruff.lint]
-select = [
-  "E",  # pycodestyle errors
-  "W",  # pycodestyle warnings
-  "F",  # Pyflakes
-  "I",  # isort
-  "B",  # flake8-bugbear
-  "UP",  # pyupgrade
-]
+{%- else %}
+[tool.pytest.ini_options]
+{% endif %}
 {% if cookiecutter.python_build_backend == "setuptools" %}
 [tool.setuptools_scm]
 version_scheme = "semver-pep440-release-branch"
