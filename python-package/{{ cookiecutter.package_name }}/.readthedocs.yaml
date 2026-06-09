@@ -13,8 +13,6 @@ build:
 {%- if cookiecutter.manage_changelog_with_towncrier %}
     post_checkout:
       - git fetch --unshallow --tags
-    post_install:
-      - pip install towncrier
     pre_build:
       - git describe --exact-match || towncrier build --keep
 {%- endif %}
