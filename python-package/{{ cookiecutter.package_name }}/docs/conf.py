@@ -15,7 +15,7 @@ with open(Path(__file__).parent.parent / "pyproject.toml", "rb") as metadata_fil
     metadata = tomllib.load(metadata_file)["project"]
 
 project = metadata["name"]
-author = "Space Telescope Science Institute"
+author = "Space Telescope Science Institute (`STScI <https://stsci.edu>`_), Association of Universities for Research in Astronomy (`AURA <https://www.aura-astronomy.org>`_)"
 copyright = f"{datetime.datetime.today().year}, {author}"
 
 package = importlib.import_module(metadata["name"])

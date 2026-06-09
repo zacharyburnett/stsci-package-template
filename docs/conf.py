@@ -9,7 +9,7 @@ import datetime
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = "stsci-package-template"
-author = "Space Telescope Science Institute"
+author = "Space Telescope Science Institute (`STScI <https://stsci.edu>`_), Association of Universities for Research in Astronomy (`AURA <https://www.aura-astronomy.org>`_)"
 copyright = f"{datetime.datetime.today().year}, {author}"
 
 # -- General configuration ---------------------------------------------------
