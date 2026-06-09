@@ -47,7 +47,7 @@ jobs:
       - run: python -m build --sdist{%- if not cookiecutter.python_c_extensions %} --wheel{%- endif %}
       - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
-          name: dist{%- if cookiecutter.python_c_extensions -%}-${{ "{{" }} matrix.target {{ "}}" }}{%- endif %}
+          name: dist{%- if cookiecutter.python_c_extensions -%}-${{ "{{" }} runner.os {{ "}}" }}-${{ "{{" }} runner.arch {{ "}}" }}{%- endif %}
           path: ./dist/
   publish:
     if: (github.event_name == 'release') && (github.event.action == 'released')
