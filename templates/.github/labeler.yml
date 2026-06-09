@@ -46,7 +46,5 @@ automation:
 testing:
   - changed-files:
       - any-glob-to-any-file:
-          - "**/tests/**"
-          - "**/regtest/**"
           - ".github/workflows/test*.yml"
           - "**/conftest.py"
