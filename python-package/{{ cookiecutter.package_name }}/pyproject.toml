@@ -47,7 +47,7 @@ requires = [
 build-backend = "{% if cookiecutter.python_build_backend == "hatchling" %}hatchling.build{% elif cookiecutter.python_build_backend == "setuptools" %}setuptools.build_meta{% endif %}"
 
 [tool.cibuildwheel]
-build = "py3*"
+build = "py311*"
 
 [tool.cibuildwheel.macos]
 archs = ["arm64", "x86_64"]

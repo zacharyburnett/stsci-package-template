@@ -7,7 +7,10 @@ from setuptools import Extension, setup
 include_dirs = [numpy.get_include()]
 
 # Setup C module macros
-define_macros = [("NUMPY", "1")]
+define_macros = [
+    ("NUMPY", "1"),
+    ("Py_LIMITED_API", 0x030B0000),  # PY_VERSION_HEX for 3.11
+]
 
 setup(
     ext_modules=[
@@ -18,4 +21,5 @@ setup(
             define_macros=define_macros,
         ),
     ],
+    options={"bdist_wheel": {"py_limited_api": "cp311"}},
 )
