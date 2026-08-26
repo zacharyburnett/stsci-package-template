@@ -8,9 +8,16 @@ import datetime
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = "stsci-package-template"
+project = "{{ cookiecutter.project_name }}"
 author = "Space Telescope Science Institute (`STScI <https://stsci.edu>`_)"
-copyright = f"{datetime.datetime.today().year}, Association of Universities for Research in Astronomy (`AURA <https://www.aura-astronomy.org>`_)"
+copyright = (
+    f"{datetime.datetime.now(tz=datetime.UTC).year}, "
+    "Association of Universities for Research in Astronomy"
+    "(`AURA <https://www.aura-astronomy.org>`_)"
+)
+
+version = "dev"
+release = "dev"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -33,7 +40,7 @@ html_theme_options = {
     "sticky_navigation": False,
     "style_external_links": True,
 }
-html_logo = "_static/stsci_pri_combo_mark_dark_bkgd.png"
+html_logo = "https://github.com/spacetelescope/stsci-package-template/blob/0c4b13779e02ff9b8fb3585615e26d51cadcc14b/docs/_static/stsci_pri_combo_mark_dark_bkgd.png"
 html_last_updated_fmt = "%b %d, %Y"
 html_sidebars = {"**": ["globaltoc.html", "relations.html", "searchbox.html"]}
 html_domain_indices = True
@@ -60,6 +67,11 @@ linkcheck_allow_unauthorized = False
 
 # Enable nitpicky mode - which ensures that all references in the docs resolve.
 nitpicky = True
+
+# -- numpydoc configuration -------------------------------------------------
+
+# Don't show summaries of the members in each class along with the class' docstring
+numpydoc_show_class_members = False
 
 # -- sphinx.ext.intersphinx configuration -----------------------------------
 # https://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html#configuration

@@ -1,0 +1,40 @@
+{%- if cookiecutter.manage_changelog_with_towncrier -%}
+breaking-change:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "changes/*.breaking.rst"
+{% endif %}
+documentation:
+  - changed-files:
+      - all-globs-to-any-file:
+          - "*.rst"
+          - "!CHANGES.rst"
+{%- if cookiecutter.manage_changelog_with_towncrier %}
+          - "!changes/*"
+{%- endif %}
+      - any-glob-to-any-file:
+          - "docs/**/*"
+          - "*.md"
+          - ".readthedocs.yaml"
+          - "LICENSE"
+{%- if cookiecutter.manage_changelog_with_towncrier %}
+          - "changes/*.docs.rst"
+{%- endif %}
+
+packaging:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "pyproject.toml"
+
+# --------------------------------------- testing ---------------------------------------
+
+automation:
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".github/**"
+
+testing:
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".github/workflows/test*.yml"
+          - "**/conftest.py"

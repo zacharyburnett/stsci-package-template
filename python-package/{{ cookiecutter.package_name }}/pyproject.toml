@@ -1,0 +1,105 @@
+[project]
+name = "{{ cookiecutter.package_name }}"
+description = "{{ cookiecutter.project_description }}"
+readme = "README.md"
+requires-python = "{{ cookiecutter.python_version }}"
+license-files = ["LICENSE"]
+authors = [{ name = "STScI" }]
+classifiers = [
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Topic :: Scientific/Engineering :: Astronomy",
+]
+dependencies = []
+dynamic = ["version"]
+
+[project.urls]
+documentation = "{% if cookiecutter.publish_docs_to == 'readthedocs.io' %}https://{{ cookiecutter.package_name }}.readthedocs.io{% elif cookiecutter.publish_docs_to == 'github.io' %}https://spacetelescope.github.io/{{ cookiecutter.package_name }}{% endif %}"
+repository = "{{ cookiecutter.repository_url }}"
+
+[project.optional-dependencies]
+contrib = [{% if cookiecutter.task_runner == 'nox' %}"nox", {% endif %}"ruff"{% if cookiecutter.task_runner == 'tox' %}, "tox"{% endif -%}]
+docs = [
+  "numpydoc",
+  "pytest_doctestplus",
+  "sphinx",
+  "sphinx-autoapi",
+  "sphinx-rtd-theme",
+  "towncrier"
+]
+test = ["pytest{% if cookiecutter.python_version.split('=')[1].split('.')[1]|int >= 10 %}>=9{% endif %}", "pytest_doctestplus", "coverage"]
+
+[build-system]
+requires = [
+{%- if cookiecutter.python_build_backend == "hatchling" %}
+  "hatch-vcs",
+  "hatchling>=1.20",
+{%- endif %}
+{%- if cookiecutter.python_c_extensions %}
+  "numpy",
+{%- endif %}
+{%- if cookiecutter.python_build_backend == "setuptools" %}
+  "setuptools>=61.2",
+  "setuptools_scm[toml]",
+{%- endif %}
+]
+build-backend = "{% if cookiecutter.python_build_backend == "hatchling" %}hatchling.build{% elif cookiecutter.python_build_backend == "setuptools" %}setuptools.build_meta{% endif %}"
+
+[tool.cibuildwheel]
+build = "py31*"
+
+[tool.cibuildwheel.macos]
+archs = ["arm64", "x86_64"]
+
+[tool.coverage.run]
+branch = true
+parallel = true
+source = ["src/", "tests/"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+fail_under = 50
+exclude_also = [
+  "if TYPE_CHECKING:",
+  "if typing.TYPE_CHECKING:",
+  "@overload",
+  "@typing.overload",
+  "class .*\\bProtocol\\):",
+  "@(abc\\.)?abstractmethod",
+  "raise NotImplementedError",
+  "\\.\\.\\.",
+]
+
+[tool.cruft]
+skip = ["**/__init__.py", "tests/*"]
+{% if cookiecutter.python_build_backend == "hatchling" %}
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.version.raw-options]
+version_scheme = "release-branch-semver"
+{% endif %}
+[tool.numpydoc_validation]
+checks = [
+  "all",
+  "EX01",  # No examples section found
+  "SA01",  # See Also section not found
+  "ES01",  # No extended summary found
+  "GL08",  # Object does not have a docstring. Ruff catches these, and allows more granular ignores.
+  "PR01",  # Parameters not documented. Already caught by ruff.
+  "PR09",  # Parameter description should finish with a period
+  "RT02",  # First line of return should contain only the type
+  "RT05",  # Return value description should finish with a period
+]
+{% if cookiecutter.python_version.split('=')[1].split('.')[1]|int >= 10 %}
+[tool.pytest]
+minversion = "9"
+{%- else %}
+[tool.pytest.ini_options]
+{% endif %}
+{% if cookiecutter.python_build_backend == "setuptools" %}
+[tool.setuptools_scm]
+version_scheme = "semver-pep440-release-branch"
+{% endif -%}

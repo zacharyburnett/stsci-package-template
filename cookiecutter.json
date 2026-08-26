@@ -1,0 +1,14 @@
+{
+  "templates": {
+    "python-package": {
+      "path": "./python-package",
+      "title": "Python package",
+      "description": "sets up Python package boilerplate"
+    },
+    "no-package": {
+      "path": "./other-package",
+      "title": "other package",
+      "description": "only sets up non-language-specific boilerplate"
+    }
+  }
+}

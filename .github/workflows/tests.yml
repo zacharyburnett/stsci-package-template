@@ -1,0 +1,103 @@
+name: template combinations
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: validate files for template combinations
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3"
+      - run: pip install cookiecutter pytest pytest-xdist
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - run: pytest tests/test_template_combinations.py -n auto
+  lint:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        directory: ["other-package", "python-package"]
+        python_build_backend: ["hatchling", "setuptools"]
+        python_c_extensions: ["y", "n"]
+        task_runner: ["none", "nox", "tox"]
+        crds_observatory: ["none"]
+        include:
+          - directory: "python-package"
+            python_build_backend: "hatchling"
+            task_runner: "nox"
+            crds_observatory: "none"
+          - directory: "python-package"
+            python_build_backend: "hatchling"
+            task_runner: "nox"
+            crds_observatory: "roman"
+            python_c_extensions: "n"
+          - directory: "python-package"
+            python_build_backend: "hatchling"
+            task_runner: "tox"
+            crds_observatory: "none"
+          - directory: "python-package"
+            python_build_backend: "hatchling"
+            task_runner: "tox"
+            crds_observatory: "roman"
+            python_c_extensions: "n"
+          - directory: "python-package"
+            python_build_backend: "setuptools"
+            python_c_extensions: "y"
+        exclude:
+          - directory: "other-package"
+            task_runner: "nox"
+          - directory: "other-package"
+            task_runner: "tox"
+          - directory: "other-package"
+            python_build_backend: "setuptools"
+          - directory: "other-package"
+            python_build_backend: "setuptools"
+          - directory: "other-package"
+            python_c_extensions: "y"
+          - python_build_backend: "hatchling"
+            python_c_extensions: "y"
+    name: lint ${{ matrix.directory }}${{ matrix.directory == 'python-package' && format(' ({0}{1}{2}{3})', matrix.python_build_backend, matrix.python_c_extensions == 'y' && ' with C extensions' || '', matrix.task_runner != 'none' && format(', {0}', matrix.task_runner) || '', matrix.crds_observatory != 'none' && format(', {0} CRDS', matrix.crds_observatory) || '') || '' }}
+    steps:
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3"
+      - run: pip install cookiecutter prek
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - name: render ${{ matrix.directory }} template with Cookiecutter
+        run: cookiecutter ${{ matrix.directory }} --no-input -o build project_name=test_${{ strategy.job-index }} ${{ matrix.directory == 'python-package' && format('publish_docs_to="readthedocs.io"  task_runner={0} python_build_backend={1} python_c_extensions={2} crds_observatory={3}', matrix.task_runner, matrix.python_build_backend, matrix.python_c_extensions, matrix.crds_observatory) || '' }}
+      - name: run linters and formatters
+        run: |
+          git init
+          git add ./*
+          prek run --all-files --verbose --show-diff-on-failure
+        working-directory: build/test_${{ strategy.job-index }}/
+      - if: ${{ matrix.directory == 'python-package' }}
+        name: build Python package
+        run: |
+          pip install .
+          pip install build
+          python -m build
+        working-directory: build/test_${{ strategy.job-index }}/
+      - name: build documentation
+        run: |
+          pip install ${{ matrix.directory == 'python-package' && '..[docs]' || '-r requirements.txt' }}
+          make html
+        working-directory: build/test_${{ strategy.job-index }}/docs/
