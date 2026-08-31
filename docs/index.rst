@@ -5,7 +5,7 @@ STScI Package Template
 This `Cookiecutter template <https://github.com/cookiecutter/cookiecutter>`_
 defines best practices and boilerplate for STScI packages::
 
-To generate files for a package, install `Cruft <https://cruft.github.io/cruft`_,
+To generate files for a package, install `Cruft <https://cruft.github.io/cruft>`_,
 run the following, and answer the prompts:
 
 .. code-block:: shell
